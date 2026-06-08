@@ -8,7 +8,7 @@
 #  5) Gunun tam radarini snapshots/ altina yazar
 #  signals.csv APPEND-ONLY mantiktadir: gecmis silinmez, denetim izi kalir.
 # ============================================================
-import os, json, datetime as dt
+import os, json, glob, datetime as dt
 import pandas as pd
 import config as C
 import swing_core as core
@@ -115,6 +115,17 @@ def main():
 
     # 5) signals.csv kaydet (append-only)
     sig_df[SIG_COLS].to_csv(SIG, index=False)
+
+    # 6) snapshot manifesti (panonun gunluk gezinmesi icin)
+    snaps = sorted([os.path.basename(p) for p in glob.glob(f"{SNAP}/*.json")
+                    if "manifest" not in os.path.basename(p)], reverse=True)
+    manifest = []
+    for fn in snaps:
+        parts = fn[:-5].split("_")
+        if len(parts) >= 2:
+            manifest.append({"date": parts[0], "tf": parts[1], "file": fn})
+    json.dump(manifest, open(f"{SNAP}/manifest.json", "w"), ensure_ascii=False, indent=2)
+
     print(f"[{today}] Tamam. Toplam sinyal: {len(sig_df)} (acik: {(~sig_df['durum'].isin(T.CLOSED)).sum()})")
 
 
