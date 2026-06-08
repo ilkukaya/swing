@@ -1,0 +1,4 @@
+# Netlify: repo kokunu oldugu gibi yayinla (build yok, statik dashboard)
+[build]
+  publish = "."
+  command = ""
