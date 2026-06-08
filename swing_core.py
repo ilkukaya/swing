@@ -3,13 +3,14 @@
 #  Pine "BIST Swing v2" ile ayni mantik: 3 sert kapi + agirlikli
 #  skor (0-100) + frekans esigi. Karar kodlari 5..-2.
 # ============================================================
-import os, warnings
+import os, warnings, time, logging
 import pandas as pd, numpy as np
 import yfinance as yf
 import config as C
 from indicators import ema, sma, rsi, macd, atr
 
 warnings.filterwarnings("ignore")
+logging.getLogger("yfinance").setLevel(logging.CRITICAL)  # "delisted" log gurultusunu kis
 
 KARAR = {5: "Long Adayi", 4: "Long Adayi/dikkat", 3: "Plan Bekle",
          2: "Giris Bekle", 1: "Guclu Izle", 0: "Izle", -1: "Riskli", -2: "Islem Yok"}
@@ -32,18 +33,25 @@ def load_universe(path="universe.txt"):
 
 
 def _download(symbols, interval, period):
-    """Toplu indirir; {sembol: df} doner (basarisizlari atlar)."""
-    tickers = [s if s.endswith((".IS", "=F", "=X")) or "=" in s else s + ".IS" for s in symbols]
-    data = yf.download(tickers, period=period, interval=interval, progress=False,
-                       auto_adjust=True, group_by="ticker", threads=True)
+    """Toplu indirir; {sembol: df} doner. Buyuk evren icin parcali (rate-limit dostu)."""
     out = {}
-    for s, t in zip(symbols, tickers):
+    CH = 40  # parca buyuklugu
+    for k in range(0, len(symbols), CH):
+        part = symbols[k:k + CH]
+        tickers = [s if s.endswith((".IS", "=F", "=X")) or "=" in s else s + ".IS" for s in part]
         try:
-            df = data[t].dropna() if len(tickers) > 1 else data.dropna()
-            if len(df) > 0:
-                out[s] = df
+            data = yf.download(tickers, period=period, interval=interval, progress=False,
+                               auto_adjust=True, group_by="ticker", threads=True)
         except Exception:
-            pass
+            continue
+        for s, t in zip(part, tickers):
+            try:
+                df = data[t].dropna() if len(tickers) > 1 else data.dropna()
+                if len(df) > 0:
+                    out[s] = df
+            except Exception:
+                pass
+        time.sleep(0.6)  # parcalar arasi kibar bekleme
     return out
 
 

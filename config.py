@@ -11,8 +11,8 @@ MIN_RR          = 1.5     # direnc hedefine asgari R/R
 DEAD_BARS       = 10      # T1 gelmezse "olu para" gun esigi
 
 # Likidite on-elemesi (cop sembolleri eler)
-MIN_PRICE       = 5.0           # asgari fiyat (TL)
-MIN_TL_VOLUME   = 20_000_000    # asgari ort. gunluk islem hacmi (TL, 20 gun)
+MIN_PRICE       = 3.0           # asgari fiyat (TL)
+MIN_TL_VOLUME   = 10_000_000    # asgari ort. gunluk islem hacmi (TL, 20 gun)
 
 MARKET_REF      = "XU100.IS"    # piyasa rejim referansi (haftalik okunur)
 
