@@ -1,0 +1,7 @@
+id,sembol,tf,tarih,giris,stop,t1,t2,son_fiyat,getiri_pct,durum,R,gun,mfe,mae
+2026-06-08_ODAS_gunluk,ODAS,gunluk,2026-06-08,7.48,6.88,8.38,8.68,7.48,0.0,ACIK,0.0,0,0.0,0.0
+2026-06-08_SARKY_gunluk,SARKY,gunluk,2026-06-08,29.44,27.54,32.28,33.23,29.44,0.0,ACIK,0.0,0,0.0,0.0
+2026-06-05_AGHOL_haftalik,AGHOL,haftalik,2026-06-05,32.3,29.05,37.18,38.81,33.18,2.72,ACIK,0.27,1,0.27,-0.19
+2026-06-05_TTKOM_haftalik,TTKOM,haftalik,2026-06-05,62.3,55.69,72.22,75.52,64.3,3.21,ACIK,0.3,1,0.31,-0.09
+2026-06-05_MAVI_haftalik,MAVI,haftalik,2026-06-05,43.6,39.12,50.31,52.55,44.14,1.24,ACIK,0.12,1,0.15,-0.19
+2026-06-05_AKSA_haftalik,AKSA,haftalik,2026-06-05,10.65,9.89,11.79,12.17,11.18,4.98,ACIK,0.7,1,0.76,-0.18
