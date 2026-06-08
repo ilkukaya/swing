@@ -93,6 +93,9 @@ def performance(tracking_rows):
         out["ort_R_beklenti"] = round(closed["R"].mean(), 3)
         out["toplam_R"] = round(closed["R"].sum(), 2)
         out["ort_gun"] = round(closed["gun"].mean(), 1)
+        w = closed[closed["R"] > 0]["R"]; l = closed[closed["R"] <= 0]["R"]
+        out["ort_kazanc_R"] = round(float(w.mean()), 3) if len(w) else 0.0   # Kelly icin
+        out["ort_kayip_R"] = round(abs(float(l.mean())), 3) if len(l) else 0.0
         for tf in closed["tf"].unique():
             sub = closed[closed["tf"] == tf]
             out[f"{tf}_kazanma_pct"] = round((sub["R"] > 0).mean() * 100, 1)

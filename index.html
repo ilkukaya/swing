@@ -91,6 +91,12 @@
   canvas{max-height:280px}
   /* gunluk */
   .dayhead{display:flex;align-items:center;gap:13px;flex-wrap:wrap;margin-bottom:14px}
+  #view-kasa input[type=number]{background:var(--panel);border:1px solid var(--line);color:var(--txt);font-family:'IBM Plex Mono';font-size:14px;padding:8px 11px;border-radius:9px}
+  #view-kasa input[type=range]{accent-color:var(--accent)}
+  .ksum{font-size:14px;color:var(--muted);margin:4px 0 18px}
+  .ktot{display:flex;gap:22px;flex-wrap:wrap;font-family:'IBM Plex Mono';font-size:13px;color:var(--muted);padding:13px 16px;border-top:1px solid var(--line)}
+  .ktot b{color:var(--txt);font-weight:500}
+  .knote{font-size:12.5px;color:var(--faint);margin-top:10px;line-height:1.6}
   select{background:var(--panel);border:1px solid var(--line);color:var(--txt);font-family:'IBM Plex Mono';
           font-size:14px;padding:9px 13px;border-radius:10px;cursor:pointer}
   .daymeta{font-size:13px;color:var(--muted)}
@@ -142,6 +148,7 @@
   <div class="tabs">
     <button class="tab active" data-view="takip">Takip</button>
     <button class="tab" data-view="gunluk">Günlük tarama</button>
+    <button class="tab" data-view="kasa">Kasa</button>
   </div>
 
   <!-- TAKIP -->
@@ -169,6 +176,54 @@
     </div>
     <div class="chips" id="chips"></div>
     <div id="radarList"></div>
+  </section>
+
+  <!-- KASA -->
+  <section class="view" id="view-kasa">
+    <div style="display:flex;gap:18px;flex-wrap:wrap;align-items:center;margin-bottom:6px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <label style="font-size:14px;color:var(--muted)">Kasa (TL)</label>
+        <input type="number" id="kcap" value="10000" step="500" style="width:120px">
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex:1;min-width:240px">
+        <label style="font-size:14px;color:var(--muted)">İşlem riski</label>
+        <input type="range" id="krisk" min="0.5" max="3" step="0.1" value="1" style="flex:1">
+        <span class="num" id="kriskOut" style="min-width:42px;font-weight:600">%1.0</span>
+      </div>
+    </div>
+    <div class="ksum" id="ksum"></div>
+
+    <div class="card" style="margin-bottom:16px">
+      <h2>Açık sinyaller — pozisyon boyutu <span>sabit % risk · lot stop'tan çıkar</span></h2>
+      <table><thead><tr>
+        <th>Sembol</th><th>Giriş</th><th>Stop</th><th>Hisse riski</th><th>Lot</th>
+        <th>Pozisyon</th><th>Kasa %'si</th><th>Stop'ta kayıp</th>
+      </tr></thead><tbody id="kasaRows"></tbody></table>
+      <div class="ktot" id="kasaTot"></div>
+    </div>
+
+    <div class="card">
+      <h2>Kelly — risk yüzdesi <span id="kStatus">what-if</span></h2>
+      <div class="cbody">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+          <label style="font-size:14px;color:var(--muted);min-width:118px">Kazanma oranı W</label>
+          <input type="range" id="kkw" min="30" max="70" step="1" value="50" style="flex:1">
+          <span class="num" id="kkwOut" style="min-width:42px;font-weight:600">%50</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:18px">
+          <label style="font-size:14px;color:var(--muted);min-width:118px">Ödül oranı R</label>
+          <input type="range" id="kkr" min="1" max="4" step="0.1" value="2" style="flex:1">
+          <span class="num" id="kkrOut" style="min-width:42px;font-weight:600">2.0</span>
+        </div>
+        <div class="kpis" style="margin-bottom:0">
+          <div class="kpi"><div class="lbl">Tam Kelly</div><div class="val" id="kFull">—</div><div class="hint">agresif</div></div>
+          <div class="kpi"><div class="lbl">Yarım Kelly</div><div class="val" id="kHalf">—</div><div class="hint">½</div></div>
+          <div class="kpi"><div class="lbl">Çeyrek Kelly</div><div class="val" id="kQ" style="color:var(--blue)">—</div><div class="hint">pratik üst sınır</div></div>
+        </div>
+        <div class="knote" id="kCompare"></div>
+        <div class="knote" id="kNote"></div>
+      </div>
+    </div>
   </section>
 
   <!-- SOZLUK -->
@@ -327,7 +382,62 @@ function renderDay(){
     <div class="neden">${neden(r)}</div></div>`).join('');
 }
 
-init(); loadGunluk();
+/* ---- KASA ---- */
+const CLOSEDJS=['STOP','T1_BE','T2','DEAD'], KELLY_MIN=20;
+const fmtTL=n=>Math.round(n).toLocaleString('tr-TR')+' TL';
+let kPerf={}, kRows=[];
+async function loadKasa(){
+  try{kPerf=await (await fetch('data/performance.json',{cache:'no-store'})).json();}catch(e){}
+  try{kRows=parseCSV(await (await fetch('data/tracking.csv',{cache:'no-store'})).text());}catch(e){}
+  try{$('kcap').value=localStorage.getItem('swing-cap')||'10000';$('krisk').value=localStorage.getItem('swing-risk')||'1';}catch(e){}
+  const closed=kPerf.kapanan||0;
+  if(closed>=KELLY_MIN && kPerf.ort_kayip_R>0){
+    const W=Math.round(kPerf.kazanma_orani_pct), Rp=kPerf.ort_kazanc_R/kPerf.ort_kayip_R;
+    $('kkw').value=W; $('kkr').value=Math.min(4,Math.max(1,Rp)).toFixed(1);
+    $('kkw').disabled=true; $('kkr').disabled=true;
+    $('kStatus').textContent='sistemin gerçek istatistiğinden ('+closed+' işlem)';
+  } else {
+    $('kStatus').textContent='what-if · '+closed+'/'+KELLY_MIN+' kapanan işlem';
+  }
+  renderKasa(); renderKelly();
+}
+function renderKasa(){
+  const cap=+$('kcap').value, risk=+$('krisk').value;
+  try{localStorage.setItem('swing-cap',cap);localStorage.setItem('swing-risk',risk);}catch(e){}
+  $('kriskOut').textContent='%'+risk.toFixed(1);
+  const riskTL=cap*risk/100;
+  $('ksum').innerHTML=`<b style="color:var(--txt)">${fmtTL(cap)}</b> kasa · işlem başına %${risk.toFixed(1)} = <b style="color:var(--txt)">${fmtTL(riskTL)}</b> risk`;
+  const open=kRows.filter(r=>!CLOSEDJS.includes(r.durum));
+  const body=$('kasaRows');
+  if(!open.length){body.innerHTML='<tr><td colspan="8" class="empty">Açık sinyal yok.</td></tr>';$('kasaTot').innerHTML='';return;}
+  let tPos=0,tLoss=0;
+  body.innerHTML=open.map(r=>{
+    const e=+r.giris, st=+r.stop, psr=e-st;
+    const lot=psr>0?Math.floor(riskTL/psr):0, pos=lot*e, pct=cap>0?pos/cap*100:0, loss=lot*psr;
+    tPos+=pos; tLoss+=loss;
+    const warn=pct>25?'color:var(--amber)':'';
+    return `<tr><td class="sym">${r.sembol}</td><td class="num">${fmt(e)}</td><td class="num">${fmt(st)}</td>
+      <td class="num">${fmt(psr)}</td><td class="num">${lot.toLocaleString('tr-TR')}</td>
+      <td class="num">${fmtTL(pos)}</td><td class="num" style="${warn}">%${pct.toFixed(1)}</td>
+      <td class="num neg">−${fmtTL(loss)}</td></tr>`;}).join('');
+  $('kasaTot').innerHTML=`<span>Tüm açık sinyaller alınsa →</span><span>toplam pozisyon <b>${fmtTL(tPos)}</b> (kasanın %${(tPos/cap*100).toFixed(0)}'i)</span><span>tümü stop olsa <b style="color:var(--red)">−${fmtTL(tLoss)}</b> (%${(tLoss/cap*100).toFixed(1)})</span>`;
+}
+function renderKelly(){
+  const W=(+$('kkw').value)/100, R=+$('kkr').value, risk=+$('krisk').value;
+  $('kkwOut').textContent='%'+(W*100).toFixed(0); $('kkrOut').textContent=R.toFixed(1);
+  let f=W-(1-W)/R, fp=f*100;
+  if(f<=0){$('kFull').textContent='%0';$('kHalf').textContent='%0';$('kQ').textContent='%0';
+    $('kCompare').textContent='Bu W/R\'de matematiksel edge yok (f* ≤ 0) → Kelly işlem açma der.';$('kNote').textContent='';return;}
+  $('kFull').textContent='%'+fp.toFixed(1);$('kHalf').textContent='%'+(fp/2).toFixed(1);$('kQ').textContent='%'+(fp/4).toFixed(1);
+  $('kCompare').innerHTML=`Senin ayarın %${risk.toFixed(1)} · çeyrek-Kelly %${(fp/4).toFixed(1)} (×${(fp/4/risk).toFixed(1)}).`;
+  $('kNote').textContent = fp>=10
+    ? `Tam Kelly %${fp.toFixed(0)} — bu seviyede %40-50 drawdown olağandır ve W'yi biraz fazla tahmin etmek iflasa götürür. Tam Kelly'yi kullanma; pratikte çeyrek bir üst sınırdır.`
+    : 'Kelly\'yi hedef değil üst sınır/sağlama olarak kullan; küçük kasada %1-2 sabit risk daha güvenli.';
+}
+['kcap','krisk'].forEach(i=>$(i).addEventListener('input',()=>{renderKasa();renderKelly();}));
+['kkw','kkr'].forEach(i=>$(i).addEventListener('input',renderKelly));
+
+init(); loadGunluk(); loadKasa();
 </script>
 </body>
 </html>
