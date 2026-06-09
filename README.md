@@ -1,38 +1,36 @@
-# Swing v2 — BIST otomatik radar & paper-test kanit toplayicisi
+# Swing v3 — BIST otomatik radar & paper-test kanit toplayicisi
 
-Cuma kapanisinda haftalik radari, her gun gunluk radari tarar; her **Long Adayi**
-sinyalini v2 cikis merdiveniyle ileri dogru izleyip sonucu R cinsinden kaydeder.
-Amac: sistemin gercek edge'i olup olmadigina dair **kanit biriktirmek** (canli para degil).
+Her aksam BIST'in tamamini (likit alt kume) tarar, **Long Adayi** sinyallerini
+gercekci dolum varsayimiyla ileri dogru izler, sonuclari R cinsinden arsivler.
+Amac: sistemin gercek edge'i olup olmadigina dair **kanit biriktirmek**.
 
-## Nasil calisir
-- `swing_core.py` — v2 tarayici (3 sert kapi + agirlikli skor 0-100 + frekans esigi). Pine "BIST Swing v2" ile ayni mantik.
-- `track.py` — acik sinyalleri cozer: STOP (-1R) / T1+maliyet (0.75R) / T1+T2 (1.75R) / olu para / acik.
-- `run.py` — orkestrator: tara -> yeni sinyalleri ekle -> takip et -> performans hesapla.
-- `.github/workflows/daily.yml` — hafta ici 16:00 UTC cron; `data/` klasorunu repoya commit'ler.
+## v3'un v2'den farklari (her biri literatur destekli, susleme yok)
+1. **RS — goreli guc (%15 agirlik):** 63 gunluk getirinin evren ici yuzdeligi.
+   Endeksi yenen hisse onceliklidir (momentum literaturunun en saglam bulgusu).
+2. **Rejim + nefes:** XU100 haftalik kapisi AYNEN durur; ek olarak nefes
+   (SMA50 ustu hisse %'si) %40 altindaysa sinyal esigi +6 SIKILASIR (asla gevsemez).
+3. **Gercekci dolum:** giris = sinyalin ertesi gun ACILISI. Acilis plani %3+
+   gecerse veya stop altina gap'lerse GAP_IPTAL (kovalanmaz, istatistik disi).
+4. **Iz suren cikis:** T1 (1.5R) yarim kapanis + maliyet stopu AYNEN; kosucu artik
+   sabit T2 yerine chandelier (en yuksek kapanis - 2.5*ATR14) ile izlenir —
+   buyuk trendi koparmaz, "aylarca tutma" sorununu da cozer (DEAD kurali durur).
+5. **Korelasyon uyarisi:** acik pozisyonlarin 60 gunluk en yuksek korelasyon
+   cifti performance.json'a yazilir; pano Kasa sekmesinde uyarir.
+6. **Kanit hijyeni:** kapananlar `data/closed.csv` arsivine eklenir (equity egrisi
+   buradan), her sinyal sistem versiyonuyla (v) damgalanir — v2/v3 kaniti karismaz.
 
-## Veri (kaynak = repo, degistirilemez denetim izi)
-- `data/signals.csv` — APPEND-ONLY sinyal defteri (gecmis silinmez).
-- `data/tracking.csv` — acik sinyallerin guncel ileri performansi.
-- `data/performance.json` — kazanma orani, ortalama R (beklenti), toplam R.
-- `data/snapshots/<tarih>_<tf>.json` — o gunun tam radari.
+## Skor (0-100): Trend 25 · Momentum 20 · RS 15 · Hacim 10 · Setup 20 · Risk 10
+3 sert kapi ayni: piyasa filtresi, fiyat>SMA200, gecerli plan (stop/ATR/R-R).
 
-## Ayarlar
-`config.py` — skor esigi (frekans), ATR risk limiti, min R/R, olu-para bar sayisi,
-likidite filtresi (min fiyat / min TL hacim). `universe.txt` — taranan hisseler;
-"tum BIST" icin tum kodlari buraya yapistir, likidite filtresi copu eler.
+## Veri dosyalari (kaynak = repo, append-only denetim izi)
+- `data/signals.csv` sinyal defteri · `data/closed.csv` kapanan arsivi
+- `data/tracking.csv` acik takip · `data/performance.json` istatistik
+- `data/regime.json` gunun rejimi · `data/snapshots/` gunluk radar
 
-## Elle calistirma
-```bash
-pip install -r requirements.txt
-python run.py
-```
+## Dürüst sinirlar
+- Veri yfinance (yaklasik) -> goreli kanit; kurus kurus P/L degil.
+- Sonuclar gecmis/ileri kagit-test kanitidir; gelecegi garanti etmez.
+- Yatirim tavsiyesi degildir.
 
-## Durust sinirlar
-- Veri yfinance (yaklasik), borsa verisi degil -> **goreli kanit** icin yeterli, kurus kurus P/L degil.
-- Altin (GC=F/XAUUSD) bu ortamda gelmeyebilir; runner'da denenir, gelmezse atlanir.
-- yfinance ara sira rate-limit verebilir; XU100 okunamazsa piyasa filtresi "engelleme" varsayar.
-- Bu bir arastirma/validasyon aracidir, yatirim tavsiyesi degildir.
-
-## Sonraki adim (opsiyonel)
-`data/` JSON/CSV'lerini okuyan bir Netlify statik panosu (performans egrisi, radar tablosu).
-Once veri birikmeli; pano sonra eklenir.
+Calistirma: `pip install -r requirements.txt && python run.py`
+Otomasyon: hafta ici 16:10 UTC (~19:10 TR) GitHub Actions; Netlify panoyu otomatik yeniler.
