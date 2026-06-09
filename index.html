@@ -257,6 +257,7 @@
 </div>
 
 <script>
+const $=id=>document.getElementById(id);
 /* tema */
 const root=document.documentElement, tBtn=document.getElementById('themeBtn');
 function setTheme(t){root.setAttribute('data-theme',t);tBtn.textContent=t==='dark'?'Açık mod':'Koyu mod';try{localStorage.setItem('swing-theme',t)}catch(e){}}
