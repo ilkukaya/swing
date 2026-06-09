@@ -1,16 +1,19 @@
 # ============================================================
-#  Swing v2 — Cekirdek tarayici
-#  Pine "BIST Swing v2" ile ayni mantik: 3 sert kapi + agirlikli
-#  skor (0-100) + frekans esigi. Karar kodlari 5..-2.
+#  Swing v3 — Cekirdek tarayici
+#  v2 -> v3 farklari:
+#   - RS (goreli guc): 63 gunluk getiri, evren ici yuzdelik -> skora %15
+#   - Piyasa nefesi (breadth): SMA50 ustu hisse %'si; zayifsa esik +6
+#   - Indirmede retry/backoff (yfinance rate-limit dostu)
+#  Karar kodlari ayni: 5..-2. Agirliklar: Trend25 Mom20 RS15 Vol10 Setup20 Risk10
 # ============================================================
-import os, warnings, time, logging
+import os, time, warnings, logging
 import pandas as pd, numpy as np
 import yfinance as yf
 import config as C
 from indicators import ema, sma, rsi, macd, atr
 
 warnings.filterwarnings("ignore")
-logging.getLogger("yfinance").setLevel(logging.CRITICAL)  # "delisted" log gurultusunu kis
+logging.getLogger("yfinance").setLevel(logging.CRITICAL)
 
 KARAR = {5: "Long Adayi", 4: "Long Adayi/dikkat", 3: "Plan Bekle",
          2: "Giris Bekle", 1: "Guclu Izle", 0: "Izle", -1: "Riskli", -2: "Islem Yok"}
@@ -24,7 +27,6 @@ def load_universe(path="universe.txt"):
             if not line or line.startswith("#"):
                 continue
             syms += [w.strip().upper() for w in line.split() if w.strip()]
-    # benzersiz, sirayi koru
     seen, out = set(), []
     for s in syms:
         if s not in seen:
@@ -32,17 +34,27 @@ def load_universe(path="universe.txt"):
     return out
 
 
+def _yf(tickers, interval, period, tries=3):
+    """yf.download + retry/backoff."""
+    for i in range(tries):
+        try:
+            return yf.download(tickers, period=period, interval=interval, progress=False,
+                               auto_adjust=True, group_by="ticker", threads=True)
+        except Exception:
+            if i < tries - 1:
+                time.sleep(3 * (i + 1))
+    return None
+
+
 def _download(symbols, interval, period):
-    """Toplu indirir; {sembol: df} doner. Buyuk evren icin parcali (rate-limit dostu)."""
+    """Parcali toplu indirme; {sembol: df} doner."""
     out = {}
-    CH = 40  # parca buyuklugu
+    CH = 40
     for k in range(0, len(symbols), CH):
         part = symbols[k:k + CH]
         tickers = [s if s.endswith((".IS", "=F", "=X")) or "=" in s else s + ".IS" for s in part]
-        try:
-            data = yf.download(tickers, period=period, interval=interval, progress=False,
-                               auto_adjust=True, group_by="ticker", threads=True)
-        except Exception:
+        data = _yf(tickers, interval, period)
+        if data is None:
             continue
         for s, t in zip(part, tickers):
             try:
@@ -51,19 +63,24 @@ def _download(symbols, interval, period):
                     out[s] = df
             except Exception:
                 pass
-        time.sleep(0.6)  # parcalar arasi kibar bekleme
+        time.sleep(0.5)
     return out
 
 
 def market_regime():
-    """Piyasa rejimi HAFTALIK XU100'den okunur (Pine refTF=1W ile ayni)."""
-    try:
-        x = yf.download(C.MARKET_REF, period="3y", interval="1wk", progress=False, auto_adjust=True)
-        x.columns = [c[0] if isinstance(c, tuple) else c for c in x.columns]
-        c = x["Close"].dropna()
-        return bool(c.iloc[-1] > ema(c, 21).iloc[-1] and c.iloc[-1] > sma(c, 50).iloc[-1])
-    except Exception:
-        return True  # veri yoksa engelleme
+    """Endeks kapisi: HAFTALIK XU100 > EMA21 ve > SMA50. (bool, aciklama)"""
+    for tk in (C.MARKET_REF, "^XU100"):
+        try:
+            x = yf.download(tk, period="3y", interval="1wk", progress=False, auto_adjust=True)
+            x.columns = [c[0] if isinstance(c, tuple) else c for c in x.columns]
+            c = x["Close"].dropna()
+            if len(c) < 60:
+                continue
+            ok = bool(c.iloc[-1] > ema(c, 21).iloc[-1] and c.iloc[-1] > sma(c, 50).iloc[-1])
+            return ok, ("endeks haftalik EMA21+SMA50 ustu" if ok else "endeks haftalik ortalamalarin altinda")
+        except Exception:
+            continue
+    return True, "endeks verisi alinamadi (engellemiyor)"
 
 
 def _passes_liquidity(df):
@@ -74,8 +91,8 @@ def _passes_liquidity(df):
     return bool(tl_vol >= C.MIN_TL_VOLUME)
 
 
-def compute(df, market_ok, max_atr=None):
-    """Tek hisse icin v2 skor + karar + plan dondurur (dict) ya da None."""
+def compute(df, market_ok, rs_pct, max_atr=None, thr_add=0):
+    """Tek hisse: v3 skor + karar + plan. rs_pct: evren ici goreli guc yuzdeligi (0-100)."""
     max_atr = C.MAX_ATR_RISK if max_atr is None else max_atr
     if len(df) < 210:
         return None
@@ -102,19 +119,21 @@ def compute(df, market_ok, max_atr=None):
     t3 = float(df["High"].iloc[-52:].max())
     rr = (t3 - px) / R if R > 0 else 0.0
 
-    # --- skor (Pine ile ayni agirliklar) ---
-    trend = (9 if px > s200 else 0) + (6 if px > s50 else 0) + (4 if px > e21 else 0) \
-            + (5 if s50up else 0) + (6 if pos_order else 0)
-    mom = (8 if r > 60 else 5 if r > 50 else 2 if r > 45 else 0) \
-          + (6 if mv > 0 else 0) + (6 if mv > sv else 0) + (5 if hv > hp else 0)
-    vol = 15 if volr > 1.3 else 8 if volr > 1 else 3 if volr > 0.7 else 0
+    # --- v3 skor: Trend25 Mom20 RS15 Vol10 Setup20 Risk10 ---
+    trend = (8 if px > s200 else 0) + (5 if px > s50 else 0) + (3 if px > e21 else 0) \
+            + (4 if s50up else 0) + (5 if pos_order else 0)
+    mom = (6 if r > 60 else 4 if r > 50 else 2 if r > 45 else 0) \
+          + (5 if mv > 0 else 0) + (5 if mv > sv else 0) + (4 if hv > hp else 0)
+    rs = 15 if rs_pct >= 80 else 10 if rs_pct >= 60 else 5 if rs_pct >= 40 else 0
+    vol = 10 if volr > 1.3 else 6 if volr > 1 else 2 if volr > 0.7 else 0
     near21 = px > e21 and abs(px - e21) / px * 100.0 < 5.0
     brk = px > float(df["High"].iloc[-21:-1].max())
     setup = min(20, (8 if 0 < dist50 < 15 else 0) + (7 if near21 else 0) + (5 if brk else 0))
     riskq = (6 if dist50 < 15 else 3 if dist50 < 20 else 0) + (4 if atr_risk <= max_atr else 0)
-    score = max(0, min(100, trend + mom + vol + setup + riskq))
+    score = max(0, min(100, trend + mom + rs + vol + setup + riskq))
 
-    # --- kapilar + karar ---
+    # --- kapilar + karar (zayif nefeste esik thr_add kadar sikilasir) ---
+    thr = C.THRESHOLD + thr_add
     trend_floor = px > s200
     plan_ok = (R > 0) and (atr_risk <= max_atr) and (stop < px)
     gates = market_ok and trend_floor and plan_ok
@@ -124,13 +143,13 @@ def compute(df, market_ok, max_atr=None):
     if not gates:
         code = -1 if (px < s200 and mv < 0) else -2
     else:
-        if score >= C.THRESHOLD and dist50 <= 20:
+        if score >= thr and dist50 <= 20:
             code = 5
-        elif score >= C.THRESHOLD:
+        elif score >= thr:
             code = 4
-        elif score >= C.THRESHOLD - C.BAND_GIRIS:
+        elif score >= thr - C.BAND_GIRIS:
             code = 2 if (r < 55 or mv < sv) else 1
-        elif score >= C.THRESHOLD - C.BAND_IZLE:
+        elif score >= thr - C.BAND_IZLE:
             code = 0
         else:
             code = -2
@@ -140,29 +159,66 @@ def compute(df, market_ok, max_atr=None):
     return dict(
         karar=KARAR[code], kod=int(code), skor=int(round(score)),
         fiyat=round(px, 2), rsi=int(round(r)), macd=(">0" if mv > 0 else "<0"),
-        volx=round(volr, 2), sma50_uz=round(dist50, 1),
+        volx=round(volr, 2), sma50_uz=round(dist50, 1), rs=int(round(rs_pct)),
         stop=round(stop, 2), stop_pct=round(stop_pct, 1), atr_risk=round(atr_risk, 1),
         rr=round(rr, 2), t1=round(t1, 2), t2=round(t2, 2), direnc=round(t3, 2),
-        trend=trend, mom=mom, vol=vol, setup=setup, riskq=riskq,
+        trend=trend, mom=mom, vol=vol, setup=setup, riskq=riskq, rs_puan=rs,
     )
 
 
 def scan(timeframe="1d"):
-    """Tum evreni tarar; sinyal DataFrame'i dondurur (kod azalan sirali)."""
+    """Iki gecisli tarama: (1) veri + getiri topla, (2) RS yuzdeligi + skor.
+       Doner: (DataFrame, rejim_dict)"""
     syms = load_universe()
     max_atr = 4.0 if timeframe in ("1wk", "1w") else C.MAX_ATR_RISK
-    mkt = market_regime()
+    mkt_ok, mkt_note = market_regime()
     period = "5y" if timeframe in ("1wk", "1w") else "2y"
-    data = _download(syms, "1wk" if timeframe in ("1wk", "1w") else "1d", period)
-    # opsiyonel ek enstrumanlar (altin vb.) — veri gelirse
-    data.update(_download(C.EXTRA_SYMBOLS, "1wk" if timeframe in ("1wk", "1w") else "1d", period))
+    interval = "1wk" if timeframe in ("1wk", "1w") else "1d"
+    data = _download(syms, interval, period)
+    data.update(_download(C.EXTRA_SYMBOLS, interval, period))
 
-    rows = []
+    # --- gecis 1: likidite + 63 bar getiri + SMA50 ustu bayragi ---
+    feats = {}
     for s, df in data.items():
         try:
             if s not in C.EXTRA_SYMBOLS and not _passes_liquidity(df):
                 continue
-            res = compute(df, mkt, max_atr)
+            c = df["Close"]
+            if len(c) < 210:
+                continue
+            ret = c.iloc[-1] / c.iloc[-C.RS_BARS] - 1.0 if len(c) > C.RS_BARS else 0.0
+            feats[s] = dict(ret=float(ret), above50=bool(c.iloc[-1] > sma(c, 50).iloc[-1]))
+        except Exception:
+            pass
+
+    # piyasa nefesi (yalnizca hisselerden; altin haric)
+    flags = [f["above50"] for s, f in feats.items() if s not in C.EXTRA_SYMBOLS]
+    breadth = round(100.0 * sum(flags) / len(flags), 1) if flags else 50.0
+    thr_add = C.NEFES_SIKILASTIRMA if breadth < C.ZAYIF_NEFES else 0
+
+    # rejim etiketi
+    if not mkt_ok:
+        rejim = "ZAYIF"
+    elif breadth >= C.GUCLU_NEFES:
+        rejim = "GUCLU"
+    elif breadth >= C.ZAYIF_NEFES:
+        rejim = "POZITIF"
+    else:
+        rejim = "TEMKINLI"
+    rejim_info = dict(rejim=rejim, breadth=breadth, endeks_ok=bool(mkt_ok),
+                      not_=mkt_note, esik=C.THRESHOLD + thr_add)
+
+    # RS yuzdelikleri (evren ici sira)
+    rets = pd.Series({s: f["ret"] for s, f in feats.items() if s not in C.EXTRA_SYMBOLS})
+    rs_pct = (rets.rank(pct=True) * 100.0).to_dict() if len(rets) else {}
+
+    # --- gecis 2: skor + karar ---
+    rows = []
+    for s, df in data.items():
+        if s not in feats:
+            continue
+        try:
+            res = compute(df, mkt_ok, rs_pct.get(s, 50.0), max_atr, thr_add)
             if res:
                 res["sembol"] = s
                 res["tf"] = "haftalik" if timeframe in ("1wk", "1w") else "gunluk"
@@ -171,9 +227,9 @@ def scan(timeframe="1d"):
         except Exception:
             pass
     if not rows:
-        return pd.DataFrame(), mkt
+        return pd.DataFrame(), rejim_info
     cols = ["sembol", "tf", "asof", "karar", "kod", "skor", "fiyat", "rsi", "macd",
-            "volx", "sma50_uz", "stop", "stop_pct", "atr_risk", "rr", "t1", "t2", "direnc",
-            "trend", "mom", "vol", "setup", "riskq"]
-    df = pd.DataFrame(rows)[cols].sort_values(["kod", "skor"], ascending=[False, False]).reset_index(drop=True)
-    return df, mkt
+            "volx", "rs", "sma50_uz", "stop", "stop_pct", "atr_risk", "rr", "t1", "t2", "direnc",
+            "trend", "mom", "vol", "setup", "riskq", "rs_puan"]
+    out = pd.DataFrame(rows)[cols].sort_values(["kod", "skor"], ascending=[False, False]).reset_index(drop=True)
+    return out, rejim_info

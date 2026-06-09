@@ -6,90 +6,127 @@
 <title>Swing — BIST Radar & Kanıt</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
   :root{
-    --bg:#f4f1ea; --panel:#fffdf8; --panel2:#efebe1; --line:#e3ddcf;
-    --txt:#1b1c20; --muted:#6c707b; --faint:#a39c8c;
-    --green:#1f8f63; --red:#c0392b; --amber:#a9781f; --blue:#3a6ea5;
-    --green-soft:rgba(31,143,99,.12); --red-soft:rgba(192,57,43,.12);
-    --amber-soft:rgba(169,120,31,.14); --blue-soft:rgba(58,110,165,.13);
-    --accent:#a9781f; --glow:rgba(169,120,31,.05);
+    --bg:#f7f8fa; --panel:#ffffff; --panel2:#f0f3fa; --line:#e0e3eb;
+    --txt:#131722; --muted:#5d6571; --faint:#9aa0ac;
+    --green:#089981; --red:#f23645; --amber:#d97316; --blue:#2962ff;
+    --green-soft:rgba(8,153,129,.12); --red-soft:rgba(242,54,69,.11);
+    --amber-soft:rgba(217,115,22,.13); --blue-soft:rgba(41,98,255,.11);
+    --accent:#2962ff; --glow:rgba(41,98,255,.05); --grid:rgba(41,55,90,.035);
   }
   html[data-theme="dark"]{
-    --bg:#0e1014; --panel:#161a22; --panel2:#1c212b; --line:#272d39;
-    --txt:#e9e7e1; --muted:#8b909c; --faint:#5b606b;
-    --green:#3fb98c; --red:#e5614f; --amber:#d9a441; --blue:#5e8fcb;
-    --green-soft:rgba(63,185,140,.14); --red-soft:rgba(229,97,79,.14);
-    --amber-soft:rgba(217,164,65,.14); --blue-soft:rgba(94,143,203,.14);
-    --accent:#d9a441; --glow:rgba(217,164,65,.06);
+    --bg:#131722; --panel:#1c2030; --panel2:#252b3b; --line:#2c3242;
+    --txt:#d6dae3; --muted:#868e9e; --faint:#5a6172;
+    --green:#26a69a; --red:#ef5350; --amber:#f0883e; --blue:#4a8fff;
+    --green-soft:rgba(38,166,154,.16); --red-soft:rgba(239,83,80,.15);
+    --amber-soft:rgba(240,136,62,.15); --blue-soft:rgba(74,143,255,.16);
+    --accent:#4a8fff; --glow:rgba(41,98,255,.10); --grid:rgba(120,140,190,.05);
   }
   *{box-sizing:border-box;margin:0;padding:0}
   body{background:var(--bg);color:var(--txt);font-family:'IBM Plex Sans',sans-serif;line-height:1.5;
        -webkit-font-smoothing:antialiased;transition:background .3s,color .3s;
-       background-image:radial-gradient(circle at 18% -10%,var(--glow),transparent 42%)}
+       background-image:radial-gradient(circle at 15% -8%,var(--glow),transparent 40%),
+         linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+       background-size:100% 100%,34px 34px,34px 34px}
   .num{font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums}
-  .wrap{max-width:1180px;margin:0 auto;padding:32px 22px 70px}
-  header{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:14px;
-         border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:22px;animation:rise .6s ease both}
-  .brand{font-family:'Fraunces',serif;font-size:30px;font-weight:600;letter-spacing:-.5px}
+  .wrap{max-width:1140px;margin:0 auto;padding:30px 22px 60px}
+  header{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:14px;animation:rise .6s ease both}
+  .brand{font-family:'Fraunces',serif;font-size:32px;font-weight:700;letter-spacing:-.6px}
   .brand .dot{color:var(--accent)}
-  .sub{color:var(--muted);font-size:13.5px;margin-top:3px}
-  .hr{display:flex;align-items:center;gap:16px}
+  .sub{color:var(--muted);font-size:13.5px;margin-top:2px;display:flex;align-items:center;gap:7px}
+  .live{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 0 var(--green);animation:pulse 2.4s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(38,166,154,.5)}70%{box-shadow:0 0 0 7px rgba(38,166,154,0)}100%{box-shadow:0 0 0 0 rgba(38,166,154,0)}}
+  .hr{display:flex;align-items:center;gap:14px}
   .upd{font-size:12px;color:var(--faint);text-align:right}
   .upd b{color:var(--muted);font-weight:500}
   .toggle{background:var(--panel);border:1px solid var(--line);color:var(--muted);cursor:pointer;
           font-family:'IBM Plex Sans';font-size:12px;padding:7px 13px;border-radius:9px;transition:.2s}
   .toggle:hover{color:var(--txt);border-color:var(--accent)}
-  .tabs{display:flex;gap:6px;margin-bottom:22px;animation:rise .6s ease both}
+  /* ticker */
+  .ticker{margin:18px 0 4px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+          overflow:hidden;white-space:nowrap;background:var(--panel);position:relative}
+  .ticker:before,.ticker:after{content:'';position:absolute;top:0;bottom:0;width:50px;z-index:2}
+  .ticker:before{left:0;background:linear-gradient(90deg,var(--panel),transparent)}
+  .ticker:after{right:0;background:linear-gradient(270deg,var(--panel),transparent)}
+  .tk-track{display:inline-flex;animation:scroll 36s linear infinite;padding:9px 0}
+  .ticker:hover .tk-track{animation-play-state:paused}
+  .tk{display:inline-flex;align-items:center;gap:7px;padding:0 20px;font-family:'IBM Plex Mono';font-size:13px;border-right:1px solid var(--line)}
+  .tk b{font-weight:600}
+  @keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  /* tabs */
+  .tabs{display:flex;gap:8px;margin:22px 0;animation:rise .6s ease both}
   .tab{background:none;border:none;border-bottom:2px solid transparent;color:var(--muted);cursor:pointer;
-       font-family:'Fraunces',serif;font-size:16px;padding:8px 4px 10px;transition:.2s}
+       font-family:'Fraunces',serif;font-size:17px;padding:8px 4px 10px;transition:.2s}
   .tab.active{color:var(--txt);border-color:var(--accent)}
   .tab:hover{color:var(--txt)}
   .view{display:none} .view.active{display:block;animation:rise .4s ease both}
-  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:24px}
+  /* kpis */
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:18px}
   .kpi{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:15px 16px;animation:rise .6s ease both}
   .kpi .lbl{font-size:11px;text-transform:uppercase;letter-spacing:.7px;color:var(--muted)}
-  .kpi .val{font-family:'IBM Plex Mono',monospace;font-size:27px;font-weight:600;margin-top:6px}
+  .kpi .val{font-family:'IBM Plex Mono';font-size:27px;font-weight:600;margin-top:6px}
   .kpi .hint{font-size:11.5px;color:var(--faint);margin-top:2px}
   .pos{color:var(--green)} .neg{color:var(--red)} .neu{color:var(--muted)}
-  .grid2{display:grid;grid-template-columns:1.15fr .85fr;gap:18px}
-  @media(max-width:880px){.grid2{grid-template-columns:1fr}}
-  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;animation:rise .7s ease both}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:16px;animation:rise .7s ease both}
   .card h2{font-family:'Fraunces',serif;font-size:16px;font-weight:600;padding:15px 18px;border-bottom:1px solid var(--line);
            display:flex;justify-content:space-between;align-items:center}
   .card h2 span{font-family:'IBM Plex Sans';font-size:11.5px;color:var(--faint);font-weight:400}
   .cbody{padding:16px 18px}
   table{width:100%;border-collapse:collapse;font-size:13px}
   th{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);text-align:right;
-     padding:10px 12px;border-bottom:1px solid var(--line);font-weight:500;position:sticky;top:0;background:var(--panel)}
+     padding:11px 14px;border-bottom:1px solid var(--line);font-weight:500;white-space:nowrap}
   th:first-child,td:first-child{text-align:left}
-  td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:right}
+  td{padding:11px 14px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
   tr:last-child td{border-bottom:none}
   tbody tr:hover{background:var(--panel2)}
-  .sym{font-weight:600;font-family:'IBM Plex Mono',monospace}
-  .pill{display:inline-block;padding:2px 9px;border-radius:7px;font-size:11.5px;font-weight:500;font-family:'IBM Plex Mono',monospace}
+  .sym{font-weight:600;font-family:'IBM Plex Mono'}
+  .pill{display:inline-block;padding:2px 9px;border-radius:7px;font-size:11.5px;font-weight:500;font-family:'IBM Plex Mono'}
   .p-acik{background:var(--blue-soft);color:var(--blue)} .p-win{background:var(--green-soft);color:var(--green)}
   .p-stop{background:var(--red-soft);color:var(--red)} .p-dead{background:var(--amber-soft);color:var(--amber)}
   .tag{font-size:10.5px;color:var(--faint);font-family:'IBM Plex Mono';text-transform:uppercase}
-  .empty{color:var(--faint);font-size:13px;padding:14px 0}
-  canvas{max-height:300px}
-  /* gunluk tarama */
-  .dayhead{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+  .empty{color:var(--faint);font-size:13px;padding:16px 18px}
+  canvas{max-height:280px}
+  /* gunluk */
+  .dayhead{display:flex;align-items:center;gap:13px;flex-wrap:wrap;margin-bottom:14px}
+  #view-kasa input[type=number]{background:var(--panel);border:1px solid var(--line);color:var(--txt);font-family:'IBM Plex Mono';font-size:14px;padding:8px 11px;border-radius:9px}
+  #view-kasa input[type=range]{accent-color:var(--accent)}
+  .ksum{font-size:14px;color:var(--muted);margin:4px 0 18px}
+  .ktot{display:flex;gap:22px;flex-wrap:wrap;font-family:'IBM Plex Mono';font-size:13px;color:var(--muted);padding:13px 16px;border-top:1px solid var(--line)}
+  .ktot b{color:var(--txt);font-weight:500}
+  .knote{font-size:12.5px;color:var(--faint);margin-top:10px;line-height:1.6}
   select{background:var(--panel);border:1px solid var(--line);color:var(--txt);font-family:'IBM Plex Mono';
           font-size:14px;padding:9px 13px;border-radius:10px;cursor:pointer}
   .daymeta{font-size:13px;color:var(--muted)}
-  .rcard{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:15px 17px;margin-bottom:11px;animation:rise .4s ease both}
-  .rtop{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:9px}
-  .rtop .sym{font-size:16px}
-  .rtop .skor{margin-left:auto;font-family:'IBM Plex Mono';font-size:13px;color:var(--muted)}
-  .metrics{display:flex;flex-wrap:wrap;gap:6px 18px;font-family:'IBM Plex Mono';font-size:12.5px;color:var(--muted);margin-bottom:9px}
+  .chips{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:18px}
+  .chip{background:var(--panel);border:1px solid var(--line);color:var(--muted);cursor:pointer;
+        font-family:'IBM Plex Mono';font-size:12.5px;padding:6px 13px;border-radius:20px;transition:.15s}
+  .chip:hover{color:var(--txt)} .chip.on{background:var(--txt);color:var(--bg);border-color:var(--txt)}
+  .chip .c{opacity:.65;margin-left:5px}
+  .rcard{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--line);border-radius:12px;
+         padding:15px 18px;margin-bottom:11px;animation:rise .35s ease both}
+  .rcard.k-long{border-left-color:var(--green)} .rcard.k-plan{border-left-color:var(--amber)}
+  .rcard.k-giris{border-left-color:var(--blue)} .rcard.k-izle{border-left-color:var(--faint)}
+  .rtop{display:flex;align-items:center;gap:11px;flex-wrap:wrap;margin-bottom:11px}
+  .rtop .sym{font-size:17px}
+  .gaugewrap{margin-left:auto;text-align:right;min-width:118px}
+  .gaugewrap .sv{font-family:'IBM Plex Mono';font-size:13px;color:var(--muted)}
+  .gauge{width:118px;height:5px;background:var(--line);border-radius:3px;overflow:hidden;margin-top:4px}
+  .gauge i{display:block;height:100%;border-radius:3px}
+  .metrics{display:flex;flex-wrap:wrap;gap:7px 20px;font-family:'IBM Plex Mono';font-size:12.5px;color:var(--muted);margin-bottom:11px}
   .metrics b{color:var(--txt);font-weight:500}
-  .neden{font-size:13px;color:var(--txt);line-height:1.6;border-left:2px solid var(--accent);padding-left:11px}
+  .neden{font-size:13px;color:var(--txt);line-height:1.62;background:var(--panel2);border-radius:9px;padding:11px 13px}
   .neden em{color:var(--muted);font-style:normal}
-  footer{margin-top:30px;padding-top:18px;border-top:1px solid var(--line);font-size:11.5px;color:var(--faint);line-height:1.7}
-  @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  /* sozluk */
+  .gloss{columns:2;column-gap:34px}
+  @media(max-width:720px){.gloss{columns:1}}
+  .gi{break-inside:avoid;margin-bottom:11px;font-size:12.5px;line-height:1.5}
+  .gi b{font-family:'IBM Plex Mono';color:var(--accent);font-weight:600}
+  .gi span{color:var(--muted)}
+  footer{margin-top:22px;font-size:11.5px;color:var(--faint);line-height:1.7}
+  @keyframes rise{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:none}}
   .kpi:nth-child(2){animation-delay:.05s}.kpi:nth-child(3){animation-delay:.1s}.kpi:nth-child(4){animation-delay:.15s}.kpi:nth-child(5){animation-delay:.2s}
 </style>
 </head>
@@ -98,7 +135,7 @@
   <header>
     <div>
       <div class="brand">Swing<span class="dot">.</span></div>
-      <div class="sub">BIST radar &amp; paper-test kanıt takibi · otomatik</div>
+      <div class="sub"><span class="live"></span>BIST radar &amp; paper-test kanıt takibi · otomatik</div>
     </div>
     <div class="hr">
       <div class="upd">Son güncelleme<br><b id="upd" class="num">—</b></div>
@@ -106,41 +143,127 @@
     </div>
   </header>
 
+  <div class="ticker"><div class="tk-track" id="ticker"></div></div>
+
+  <div id="regimeBar" style="margin:14px 0 0;padding:11px 16px;border-radius:12px;border:1px solid var(--line);background:var(--panel);font-size:13.5px;align-items:center;gap:14px;flex-wrap:wrap;display:none">
+    <span id="regimeBadge" class="pill"></span>
+    <span id="regimeTxt" style="color:var(--muted)"></span>
+  </div>
+
   <div class="tabs">
     <button class="tab active" data-view="takip">Takip</button>
     <button class="tab" data-view="gunluk">Günlük tarama</button>
+    <button class="tab" data-view="kasa">Kasa</button>
   </div>
 
-  <!-- ============ TAKIP ============ -->
+  <!-- TAKIP -->
   <section class="view active" id="view-takip">
     <div class="kpis" id="kpis"></div>
-    <div class="grid2">
-      <div class="card">
-        <h2>Açık &amp; kapanan sinyaller <span>v2 takip</span></h2>
-        <div style="max-height:520px;overflow:auto">
-          <table id="tbl"><thead><tr>
-            <th>Sembol</th><th>TF</th><th>Giriş tar.</th><th>Giriş</th><th>Son</th>
-            <th>Getiri</th><th>Durum</th><th>R</th><th>Gün</th><th>MFE</th><th>MAE</th>
-          </tr></thead><tbody id="rows"></tbody></table>
-        </div>
-      </div>
-      <div class="card">
-        <h2>R dağılımı <span>sinyal başına</span></h2>
-        <div class="cbody"><canvas id="chart"></canvas>
-          <div id="chartEmpty" class="empty" style="display:none">Henüz veri yok.</div>
-        </div>
-      </div>
+    <div class="card">
+      <h2>Açık &amp; kapanan sinyaller <span>v2 takip · R'ye göre sıralı</span></h2>
+      <table id="tbl"><thead><tr>
+        <th>Sembol</th><th>TF</th><th>Giriş tar.</th><th>Giriş</th><th>Son</th>
+        <th>Getiri</th><th>Durum</th><th>R</th><th>Gün</th><th>MFE</th><th>MAE</th>
+      </tr></thead><tbody id="rows"></tbody></table>
+    </div>
+    <div class="card">
+      <h2>R dağılımı <span>sinyal başına gerçekleşen / açık R</span></h2>
+      <div class="cbody"><canvas id="chart"></canvas>
+        <div id="chartEmpty" class="empty" style="display:none">Henüz veri yok.</div></div>
+    </div>
+    <div class="card">
+      <h2>Equity eğrisi <span>kapanan işlemler · kümülatif R</span></h2>
+      <div class="cbody"><canvas id="eqChart"></canvas>
+        <div id="eqEmpty" class="empty" style="display:none">Henüz kapanan işlem yok — eğri ilk kapanışla başlar.</div></div>
     </div>
   </section>
 
-  <!-- ============ GUNLUK TARAMA ============ -->
+  <!-- GUNLUK -->
   <section class="view" id="view-gunluk">
     <div class="dayhead">
       <select id="dateSel"></select>
       <span class="daymeta" id="daymeta"></span>
     </div>
+    <div class="chips" id="chips"></div>
     <div id="radarList"></div>
   </section>
+
+  <!-- KASA -->
+  <section class="view" id="view-kasa">
+    <div style="display:flex;gap:18px;flex-wrap:wrap;align-items:center;margin-bottom:6px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <label style="font-size:14px;color:var(--muted)">Kasa (TL)</label>
+        <input type="number" id="kcap" value="10000" step="500" style="width:120px">
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex:1;min-width:240px">
+        <label style="font-size:14px;color:var(--muted)">İşlem riski</label>
+        <input type="range" id="krisk" min="0.5" max="3" step="0.1" value="1" style="flex:1">
+        <span class="num" id="kriskOut" style="min-width:42px;font-weight:600">%1.0</span>
+      </div>
+    </div>
+    <div class="ksum" id="ksum"></div>
+
+    <div class="card" style="margin-bottom:16px">
+      <h2>Açık sinyaller — pozisyon boyutu <span>sabit % risk · lot stop'tan çıkar</span></h2>
+      <table><thead><tr>
+        <th>Sembol</th><th>Giriş</th><th>Stop</th><th>Hisse riski</th><th>Lot</th>
+        <th>Pozisyon</th><th>Kasa %'si</th><th>Stop'ta kayıp</th>
+      </tr></thead><tbody id="kasaRows"></tbody></table>
+      <div class="ktot" id="kasaTot"></div>
+    </div>
+
+    <div class="card">
+      <h2>Kelly — risk yüzdesi <span id="kStatus">what-if</span></h2>
+      <div class="cbody">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+          <label style="font-size:14px;color:var(--muted);min-width:118px">Kazanma oranı W</label>
+          <input type="range" id="kkw" min="30" max="70" step="1" value="50" style="flex:1">
+          <span class="num" id="kkwOut" style="min-width:42px;font-weight:600">%50</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:18px">
+          <label style="font-size:14px;color:var(--muted);min-width:118px">Ödül oranı R</label>
+          <input type="range" id="kkr" min="1" max="4" step="0.1" value="2" style="flex:1">
+          <span class="num" id="kkrOut" style="min-width:42px;font-weight:600">2.0</span>
+        </div>
+        <div class="kpis" style="margin-bottom:0">
+          <div class="kpi"><div class="lbl">Tam Kelly</div><div class="val" id="kFull">—</div><div class="hint">agresif</div></div>
+          <div class="kpi"><div class="lbl">Yarım Kelly</div><div class="val" id="kHalf">—</div><div class="hint">½</div></div>
+          <div class="kpi"><div class="lbl">Çeyrek Kelly</div><div class="val" id="kQ" style="color:var(--blue)">—</div><div class="hint">pratik üst sınır</div></div>
+        </div>
+        <div class="knote" id="kCompare"></div>
+        <div class="knote" id="kNote"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SOZLUK -->
+  <div class="card">
+    <h2>Kısaltmalar &amp; sözlük <span>tablo ve kartlardaki terimler</span></h2>
+    <div class="cbody gloss">
+      <div class="gi"><b>R</b> — <span>Risk birimi. 1R = giriş ile stop arası mesafe. +2R, riske aldığın tutarın 2 katı kazanç demek; tüm performans R cinsinden ölçülür (sermaye bağımsız).</span></div>
+      <div class="gi"><b>R/R</b> — <span>Risk/ödül oranı: dirence kadar potansiyel ÷ risk. Sistem ≥ 1.5 arar; düşükse "Plan Bekle".</span></div>
+      <div class="gi"><b>MFE</b> — <span>En yüksek <em>lehte</em> hareket (R). Sinyal boyunca görülen en iyi kazanç noktası.</span></div>
+      <div class="gi"><b>MAE</b> — <span>En yüksek <em>aleyhte</em> hareket (R). Sinyal boyunca görülen en kötü gerileme.</span></div>
+      <div class="gi"><b>Getiri</b> — <span>Giriş fiyatına göre güncel yüzde değişim.</span></div>
+      <div class="gi"><b>TF</b> — <span>Zaman dilimi: günlük tarama ya da haftalık tarama.</span></div>
+      <div class="gi"><b>Skor</b> — <span>v2 puanı (0–100): trend + momentum + hacim + setup + risk kalitesi.</span></div>
+      <div class="gi"><b>ATR risk</b> — <span>Stop mesafesinin oynaklık (ATR) cinsinden büyüklüğü. ≤ 3 aranır; yüksekse stop fazla geniş.</span></div>
+      <div class="gi"><b>Durum · AÇIK</b> — <span>Pozisyon açık, henüz T1 veya stop'a değmedi.</span></div>
+      <div class="gi"><b>Durum · T1_ACIK</b> — <span>İlk hedef (T1) alındı, kalan "koşucu" kısım açık.</span></div>
+      <div class="gi"><b>Durum · T1_BE</b> — <span>T1 sonrası koşucu maliyet stopunda kapandı (+0.75R).</span></div>
+      <div class="gi"><b>Durum · T2</b> — <span>İkinci hedef alındı (+1.75R).</span></div>
+      <div class="gi"><b>Durum · STOP</b> — <span>T1 öncesi stop yedi (−1R).</span></div>
+      <div class="gi"><b>Durum · DEAD</b> — <span>Ölü para: belirli sürede T1 gelmedi, pozisyon kapatıldı.</span></div>
+      <div class="gi"><b>Durum · TRAIL</b> — <span>T1 sonrası koşucu, iz süren stopla (en yüksek kapanış − 2.5×ATR) kapandı. R değişken — trend büyüdüyse büyük.</span></div>
+      <div class="gi"><b>Durum · GAP_IPTAL</b> — <span>Ertesi gün açılış plan fiyatından %3+ yukarı (veya stop altına) gap'ledi → işlem alınmadı sayılır, istatistik dışı.</span></div>
+      <div class="gi"><b>RS</b> — <span>Göreli güç: 3 aylık getirinin evren içi yüzdeliği. %80+ = hisselerin %80'inden iyi performans (endeksi yenenler önceliklidir).</span></div>
+      <div class="gi"><b>Rejim / Nefes</b> — <span>Piyasa rejimi: XU100 haftalık konum + nefes (SMA50 üstü hisse %'si). Nefes %40 altındaysa sinyal eşiği otomatik sıkılaşır.</span></div>
+      <div class="gi"><b>Giriş (fiili)</b> — <span>v3: işlem girişi sinyal kapanışı değil, ertesi gün açılışıdır (gerçekçi dolum).</span></div>
+      <div class="gi"><b>Long Adayı</b> — <span>3 kapı açık, skor eşik üstü, R/R uygun — giriş için en güçlü aday.</span></div>
+      <div class="gi"><b>Plan Bekle</b> — <span>Skor yüksek ama direnç yakın / R/R düşük. Kırılım beklenir.</span></div>
+      <div class="gi"><b>Giriş Bekle</b> — <span>Trend tamam, momentum veya hacim eksik — tetik beklenir.</span></div>
+    </div>
+  </div>
 
   <footer>
     Veri yfinance (yaklaşık), borsa verisi değil — göreli kanıt için, kuruşu kuruşuna P/L değil.
@@ -149,52 +272,71 @@
 </div>
 
 <script>
-/* ---------- tema ---------- */
-const root=document.documentElement, tb=document.getElementById('themeBtn');
-function setTheme(t){root.setAttribute('data-theme',t);tb.textContent=t==='dark'?'Açık mod':'Koyu mod';
-  try{localStorage.setItem('swing-theme',t)}catch(e){}}
+const $=id=>document.getElementById(id);
+/* tema */
+const root=document.documentElement, tBtn=document.getElementById('themeBtn');
+function setTheme(t){root.setAttribute('data-theme',t);tBtn.textContent=t==='dark'?'Açık mod':'Koyu mod';try{localStorage.setItem('swing-theme',t)}catch(e){}}
 setTheme((()=>{try{return localStorage.getItem('swing-theme')||'light'}catch(e){return 'light'}})());
-tb.onclick=()=>setTheme(root.getAttribute('data-theme')==='dark'?'light':'dark');
-
-/* ---------- sekmeler ---------- */
+tBtn.onclick=()=>setTheme(root.getAttribute('data-theme')==='dark'?'light':'dark');
+/* sekmeler */
 document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
   document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
   document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
-  t.classList.add('active');
-  document.getElementById('view-'+t.dataset.view).classList.add('active');
-});
-
-/* ---------- yardimcilar ---------- */
+  t.classList.add('active');document.getElementById('view-'+t.dataset.view).classList.add('active');});
+/* yardimcilar */
 function parseCSV(t){const l=t.trim().split(/\r?\n/);if(l.length<2)return [];const h=l[0].split(',');
   return l.slice(1).map(r=>{const c=r.split(',');const o={};h.forEach((k,i)=>o[k.trim()]=(c[i]||'').trim());return o;});}
 function fmt(n,d=2){const x=parseFloat(n);return isNaN(x)?'—':x.toFixed(d);}
 function rcls(r){const x=parseFloat(r);return x>0?'pos':x<0?'neg':'neu';}
-function statusPill(s){if(s==='ACIK'||s==='T1_ACIK')return 'p-acik';if(s==='STOP')return 'p-stop';if(s==='DEAD')return 'p-dead';return 'p-win';}
-
-/* ---------- otomatik 'neden eklendi' yorumu ---------- */
+function arr(v){const x=parseFloat(v);return x>0?'▲':x<0?'▼':'·';}
+function statusPill(s){if(s==='ACIK'||s==='T1_ACIK')return 'p-acik';if(s==='STOP')return 'p-stop';if(s==='DEAD'||s==='GAP_IPTAL')return 'p-dead';return 'p-win';}
+function kgrup(k){return k>=4?'Long Adayı':k===3?'Plan Bekle':k===2?'Giriş Bekle':'İzle';}
+function kcls(k){return k>=4?'k-long':k===3?'k-plan':k===2?'k-giris':'k-izle';}
+function kcolor(k){return k>=4?'var(--green)':k===3?'var(--amber)':k===2?'var(--blue)':'var(--faint)';}
 function neden(r){
   const t=[];
   t.push(r.trend>=28?`trend tam (${r.trend}/30)`:r.trend>=20?`trend güçlü (${r.trend}/30)`:`trend zayıf (${r.trend}/30)`);
-  const mm=r.mom>=18?'momentum güçlü':r.mom>=12?'momentum orta':'momentum zayıf';
-  t.push(`${mm} (RSI ${r.rsi}, MACD ${r.macd})`);
-  t.push(`hacim ${r.volx}× ${r.vol>=12?'(ort. üstü)':r.vol>=8?'(normal)':'(zayıf)'}`);
+  t.push(`${r.mom>=18?'momentum güçlü':r.mom>=12?'momentum orta':'momentum zayıf'} (RSI ${r.rsi}, MACD ${r.macd})`);
+  t.push(`hacim ${r.volx}× ${r.vol>=8?'(ort. üstü)':r.vol>=6?'(normal)':'(zayıf)'}`);
+  if(r.rs!=null)t.push(`RS gücü %${r.rs} ${r.rs>=80?'(lider grup)':r.rs>=60?'(endeks üstü)':'(vasat)'}`);
   const d=parseFloat(r.sma50_uz);
   t.push(`SMA50'ye ${d>0?'+':''}${d}% ${(d>=0&&d<=15)?'(sağlıklı)':d>20?'(aşırı uzak)':'(yakın)'}`);
   if(r.setup>=12)t.push('setup oluşmuş (pullback/kırılım)');
-  let karar='';
-  if(r.kod>=4) karar=`<b>Skor ${r.skor}/100, 3 kapı açık, R/R ${r.rr} → Long Adayı.</b> Stop ${fmt(r.stop)} (%${fmt(r.stop_pct,1)}, ${fmt(r.atr_risk,1)} ATR), hedef T1 ${fmt(r.t1)}, direnç ${fmt(r.direnc)}.`;
-  else if(r.kod===3) karar=`<b>Skor yüksek (${r.skor}) ama direnç yakın (R/R ${r.rr} < 1.5) → Plan Bekle.</b> ${fmt(r.direnc)} kırılımını hacimle bekle.`;
-  else if(r.kod===2) karar=`<b>Trend tamam, ${parseFloat(r.rsi)<55?'momentum':'hacim'} biraz eksik → Giriş Bekle.</b> Günlük tetik bekleniyor.`;
-  else karar=`İzlemede.`;
-  return `<em>${t.join(' · ')}.</em> ${karar}`;
+  let k='';
+  if(r.kod>=4)k=`<b>Skor ${r.skor}/100, 3 kapı açık, R/R ${r.rr} → Long Adayı.</b> Stop ${fmt(r.stop)} (%${fmt(r.stop_pct,1)}, ${fmt(r.atr_risk,1)} ATR), hedef T1 ${fmt(r.t1)}, direnç ${fmt(r.direnc)}.`;
+  else if(r.kod===3)k=`<b>Skor yüksek (${r.skor}) ama direnç yakın (R/R ${r.rr} &lt; 1.5) → Plan Bekle.</b> ${fmt(r.direnc)} kırılımını hacimle bekle.`;
+  else if(r.kod===2)k=`<b>Trend tamam, ${parseFloat(r.rsi)<55?'momentum':'hacim'} biraz eksik → Giriş Bekle.</b> Günlük tetik bekleniyor.`;
+  else k='İzlemede.';
+  return `<em>${t.join(' · ')}.</em> ${k}`;
 }
 
-/* ---------- TAKIP ---------- */
-async function loadTakip(){
-  let perf={},rows=[];
+/* ---- TAKIP + ticker ---- */
+async function init(){
+  let perf={},rows=[],rejim=null,closedRows=[];
   try{perf=await (await fetch('data/performance.json',{cache:'no-store'})).json();}catch(e){}
   try{rows=parseCSV(await (await fetch('data/tracking.csv',{cache:'no-store'})).text());}catch(e){}
+  try{rejim=await (await fetch('data/regime.json',{cache:'no-store'})).json();}catch(e){}
+  try{closedRows=parseCSV(await (await fetch('data/closed.csv',{cache:'no-store'})).text());}catch(e){}
   document.getElementById('upd').textContent=perf.guncelleme||'—';
+
+  // rejim banner
+  if(rejim&&rejim.rejim){
+    const rb=document.getElementById('regimeBar');
+    rb.style.display='flex';
+    const map={'GUCLU':['p-win','GÜÇLÜ BOĞA'],'POZITIF':['p-acik','POZİTİF'],'TEMKINLI':['p-dead','TEMKİNLİ'],'ZAYIF':['p-stop','ZAYIF — yeni işlem yok']};
+    const [cls,lbl]=map[rejim.rejim]||['p-acik',rejim.rejim];
+    const bd=document.getElementById('regimeBadge'); bd.className='pill '+cls; bd.textContent='Rejim: '+lbl;
+    document.getElementById('regimeTxt').textContent=`Nefes: hisselerin %${rejim.breadth}'i SMA50 üstünde · sinyal eşiği ${rejim.esik}${rejim.esik>78?' (sıkılaştı)':''} · ${rejim.not_||''}`;
+  }
+
+  // ticker
+  const tk=document.getElementById('ticker');
+  if(rows.length){
+    const items=rows.map(r=>{const g=parseFloat(r.getiri_pct);const c=g>0?'var(--green)':g<0?'var(--red)':'var(--muted)';
+      return `<span class="tk"><b>${r.sembol}</b><span style="color:${c}">${arr(g)} ${(g>0?'+':'')+fmt(g,1)}%</span></span>`;}).join('');
+    tk.innerHTML=items+items; // kesintisiz dongu
+  } else { tk.parentElement.style.display='none'; }
+
   const closed=perf.kapanan||0, bek=closed>0?perf.ort_R_beklenti:null;
   const kpis=[
     {l:'Beklenti (ort R)',v:bek!=null?(bek>0?'+':'')+fmt(bek):'—',c:bek!=null?rcls(bek):'neu',h:closed>0?'kapanan işlem başına':'kapanan işlem bekleniyor'},
@@ -204,6 +346,7 @@ async function loadTakip(){
     {l:'Toplam sinyal',v:perf.toplam_sinyal!=null?perf.toplam_sinyal:'—',c:'neu',h:closed+' kapandı'},
   ];
   document.getElementById('kpis').innerHTML=kpis.map(k=>`<div class="kpi"><div class="lbl">${k.l}</div><div class="val ${k.c}">${k.v}</div><div class="hint">${k.h}</div></div>`).join('');
+
   const body=document.getElementById('rows');
   if(!rows.length){body.innerHTML='<tr><td colspan="11" class="empty">Henüz takip edilen sinyal yok.</td></tr>';}
   else{
@@ -211,48 +354,135 @@ async function loadTakip(){
     body.innerHTML=rows.map(r=>{const g=parseFloat(r.getiri_pct);return `<tr>
       <td class="sym">${r.sembol}</td><td><span class="tag">${r.tf||''}</span></td>
       <td class="num" style="color:var(--muted)">${r.tarih||''}</td>
-      <td class="num">${fmt(r.giris)}</td><td class="num">${fmt(r.son_fiyat)}</td>
-      <td class="num ${rcls(g)}">${(g>0?'+':'')+fmt(g,1)}%</td>
+      <td class="num">${fmt(r.giris_fiili||r.giris)}</td><td class="num">${fmt(r.son_fiyat)}</td>
+      <td class="num ${rcls(g)}">${arr(g)} ${(g>0?'+':'')+fmt(g,1)}%</td>
       <td><span class="pill ${statusPill(r.durum)}">${r.durum}</span></td>
       <td class="num ${rcls(r.R)}">${(parseFloat(r.R)>0?'+':'')+fmt(r.R)}</td>
       <td class="num" style="color:var(--muted)">${r.gun||0}</td>
       <td class="num pos">${fmt(r.mfe)}</td><td class="num neg">${fmt(r.mae)}</td></tr>`;}).join('');
   }
   const cv=document.getElementById('chart');
-  if(!rows.length){cv.style.display='none';document.getElementById('chartEmpty').style.display='block';return;}
-  const data=rows.map(r=>parseFloat(r.R)||0);
-  new Chart(cv,{type:'bar',data:{labels:rows.map(r=>r.sembol),datasets:[{data,backgroundColor:data.map(v=>v>0?'#3fb98c':v<0?'#e5614f':'#5e8fcb'),borderRadius:5,maxBarThickness:30}]},
-    options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>'R: '+c.parsed.y.toFixed(2)}}},
-      scales:{x:{grid:{display:false},ticks:{color:'#8b909c',font:{family:'IBM Plex Mono'}}},
-        y:{grid:{color:'rgba(128,128,128,.18)'},ticks:{color:'#8b909c',font:{family:'IBM Plex Mono'}}}}}});
+  if(!rows.length){cv.style.display='none';document.getElementById('chartEmpty').style.display='block';}
+  else{
+    const data=rows.map(r=>parseFloat(r.R)||0);
+    new Chart(cv,{type:'bar',data:{labels:rows.map(r=>r.sembol),datasets:[{data,backgroundColor:data.map(v=>v>0?'#26a69a':v<0?'#ef5350':'#4a8fff'),borderRadius:5,maxBarThickness:46}]},
+      options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>'R: '+c.parsed.y.toFixed(2)}}},
+        scales:{x:{grid:{display:false},ticks:{color:'#8b909c',font:{family:'IBM Plex Mono'}}},
+          y:{grid:{color:'rgba(128,128,128,.16)'},ticks:{color:'#8b909c',font:{family:'IBM Plex Mono'}}}}}});
+  }
+  // equity egrisi — kapanan islemler (GAP_IPTAL haric), kapanis tarihine gore kumulatif R
+  const ec=document.getElementById('eqChart');
+  const eClosed=closedRows.filter(r=>['STOP','T1_BE','T2','TRAIL','DEAD'].includes(r.durum))
+    .sort((a,b)=>(a.son_tarih||a.tarih).localeCompare(b.son_tarih||b.tarih));
+  if(!eClosed.length){ec.style.display='none';document.getElementById('eqEmpty').style.display='block';}
+  else{
+    let cum=0; const pts=eClosed.map(r=>{cum+=parseFloat(r.R)||0;return {x:(r.son_tarih||r.tarih),y:+cum.toFixed(2),s:r.sembol};});
+    new Chart(ec,{type:'line',data:{labels:pts.map(p=>p.x),datasets:[{data:pts.map(p=>p.y),borderColor:'#2962ff',backgroundColor:'rgba(41,98,255,.10)',fill:true,tension:.25,pointRadius:3}]},
+      options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>pts[c.dataIndex].s+' → kümülatif '+c.parsed.y.toFixed(2)+'R'}}},
+        scales:{x:{grid:{display:false},ticks:{color:'#8b909c',font:{family:'IBM Plex Mono',size:10}}},
+          y:{grid:{color:'rgba(128,128,128,.16)'},ticks:{color:'#8b909c',font:{family:'IBM Plex Mono'}}}}}});
+  }
 }
 
-/* ---------- GUNLUK TARAMA ---------- */
+/* ---- GUNLUK (filtreli) ---- */
+let dayRows=[], dayFilter='Tümü';
 async function loadGunluk(){
   let man=[];
   try{man=await (await fetch('data/snapshots/manifest.json',{cache:'no-store'})).json();}catch(e){}
-  const sel=document.getElementById('dateSel'), list=document.getElementById('radarList');
-  if(!man.length){list.innerHTML='<div class="empty">Henüz tarama snapshot\'i yok. Bot ilk kez çalışınca dolar.</div>';return;}
+  const sel=document.getElementById('dateSel');
+  if(!man.length){document.getElementById('radarList').innerHTML='<div class="empty">Henüz tarama snapshot\'i yok. Bot ilk kez çalışınca dolar.</div>';return;}
   sel.innerHTML=man.map((m,i)=>`<option value="${i}">${m.date} · ${m.tf}</option>`).join('');
-  async function show(i){
-    const m=man[i]; let rows=[];
-    try{rows=await (await fetch('data/snapshots/'+m.file,{cache:'no-store'})).json();}catch(e){}
-    document.getElementById('daymeta').textContent=`${m.date} ${m.tf} taraması — radarda ${rows.length} hisse`;
-    if(!rows.length){list.innerHTML='<div class="empty">Bu günde radar boş.</div>';return;}
-    rows.sort((a,b)=>(b.kod-a.kod)||(b.skor-a.skor));
-    list.innerHTML=rows.map(r=>`<div class="rcard">
-      <div class="rtop"><span class="sym">${r.sembol}</span>
-        <span class="pill ${r.kod>=4?'p-win':r.kod===3?'p-dead':'p-acik'}">${r.karar}</span>
-        <span class="skor">skor ${r.skor}/100</span></div>
-      <div class="metrics"><span>Fiyat <b>${fmt(r.fiyat)}</b></span><span>Stop <b>${fmt(r.stop)}</b> (%${fmt(r.stop_pct,1)})</span>
-        <span>R/R <b>${fmt(r.rr)}</b></span><span>T1 <b>${fmt(r.t1)}</b></span><span>Direnç <b>${fmt(r.direnc)}</b></span><span>ATR risk <b>${fmt(r.atr_risk,1)}</b></span></div>
-      <div class="neden">${neden(r)}</div></div>`).join('');
-  }
-  sel.onchange=()=>show(+sel.value);
-  show(0);
+  sel.onchange=()=>showDay(man[+sel.value]);
+  showDay(man[0]);
+}
+async function showDay(m){
+  dayRows=[]; dayFilter='Tümü';
+  try{dayRows=await (await fetch('data/snapshots/'+m.file,{cache:'no-store'})).json();}catch(e){}
+  dayRows.sort((a,b)=>(b.kod-a.kod)||(b.skor-a.skor));
+  document.getElementById('daymeta').textContent=`${m.date} ${m.tf} taraması — radarda ${dayRows.length} hisse`;
+  // chip'ler
+  const order=['Long Adayı','Plan Bekle','Giriş Bekle','İzle'];
+  const counts={}; dayRows.forEach(r=>{const g=kgrup(r.kod);counts[g]=(counts[g]||0)+1;});
+  const cats=['Tümü',...order.filter(o=>counts[o])];
+  document.getElementById('chips').innerHTML=cats.map(c=>{
+    const n=c==='Tümü'?dayRows.length:counts[c];
+    return `<button class="chip ${c===dayFilter?'on':''}" data-c="${c}">${c}<span class="c">${n}</span></button>`;}).join('');
+  document.querySelectorAll('.chip').forEach(ch=>ch.onclick=()=>{dayFilter=ch.dataset.c;
+    document.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x.dataset.c===dayFilter));renderDay();});
+  renderDay();
+}
+function renderDay(){
+  const list=document.getElementById('radarList');
+  const rows=dayFilter==='Tümü'?dayRows:dayRows.filter(r=>kgrup(r.kod)===dayFilter);
+  if(!rows.length){list.innerHTML='<div class="empty">Bu filtrede hisse yok.</div>';return;}
+  list.innerHTML=rows.map(r=>`<div class="rcard ${kcls(r.kod)}">
+    <div class="rtop"><span class="sym">${r.sembol}</span>
+      <span class="pill ${r.kod>=4?'p-win':r.kod===3?'p-dead':'p-acik'}">${r.karar}</span>
+      <div class="gaugewrap"><div class="sv">skor ${r.skor}/100</div>
+        <div class="gauge"><i style="width:${r.skor}%;background:${kcolor(r.kod)}"></i></div></div></div>
+    <div class="metrics"><span>Fiyat <b>${fmt(r.fiyat)}</b></span><span>Stop <b>${fmt(r.stop)}</b> (%${fmt(r.stop_pct,1)})</span>
+      <span>R/R <b>${fmt(r.rr)}</b></span><span>T1 <b>${fmt(r.t1)}</b></span><span>Direnç <b>${fmt(r.direnc)}</b></span><span>ATR risk <b>${fmt(r.atr_risk,1)}</b></span></div>
+    <div class="neden">${neden(r)}</div></div>`).join('');
 }
 
-loadTakip(); loadGunluk();
+/* ---- KASA ---- */
+const CLOSEDJS=['STOP','T1_BE','T2','DEAD'], KELLY_MIN=20;
+const fmtTL=n=>Math.round(n).toLocaleString('tr-TR')+' TL';
+let kPerf={}, kRows=[];
+async function loadKasa(){
+  try{kPerf=await (await fetch('data/performance.json',{cache:'no-store'})).json();}catch(e){}
+  try{kRows=parseCSV(await (await fetch('data/tracking.csv',{cache:'no-store'})).text());}catch(e){}
+  try{$('kcap').value=localStorage.getItem('swing-cap')||'10000';$('krisk').value=localStorage.getItem('swing-risk')||'1';}catch(e){}
+  const closed=kPerf.kapanan||0;
+  if(closed>=KELLY_MIN && kPerf.ort_kayip_R>0){
+    const W=Math.round(kPerf.kazanma_orani_pct), Rp=kPerf.ort_kazanc_R/kPerf.ort_kayip_R;
+    $('kkw').value=W; $('kkr').value=Math.min(4,Math.max(1,Rp)).toFixed(1);
+    $('kkw').disabled=true; $('kkr').disabled=true;
+    $('kStatus').textContent='sistemin gerçek istatistiğinden ('+closed+' işlem)';
+  } else {
+    $('kStatus').textContent='what-if · '+closed+'/'+KELLY_MIN+' kapanan işlem';
+  }
+  renderKasa(); renderKelly();
+}
+function renderKasa(){
+  const cap=+$('kcap').value, risk=+$('krisk').value;
+  try{localStorage.setItem('swing-cap',cap);localStorage.setItem('swing-risk',risk);}catch(e){}
+  $('kriskOut').textContent='%'+risk.toFixed(1);
+  const riskTL=cap*risk/100;
+  const kw=kPerf.maks_korelasyon;
+  const korrHtml=(kw&&kw.deger>=0.7)?`<div style="margin-top:8px;padding:9px 13px;border-radius:9px;background:var(--amber-soft);color:var(--amber);font-size:13px">⚠ Yoğunlaşma: <b>${kw.cift}</b> 60 günlük korelasyon ${kw.deger} — bu ikisi büyük ölçüde aynı işlem; ikisine birden tam boy girmek riski katlar.</div>`:'';
+  $('ksum').innerHTML=`<b style="color:var(--txt)">${fmtTL(cap)}</b> kasa · işlem başına %${risk.toFixed(1)} = <b style="color:var(--txt)">${fmtTL(riskTL)}</b> risk`+korrHtml;
+  const open=kRows.filter(r=>!CLOSEDJS.includes(r.durum));
+  const body=$('kasaRows');
+  if(!open.length){body.innerHTML='<tr><td colspan="8" class="empty">Açık sinyal yok.</td></tr>';$('kasaTot').innerHTML='';return;}
+  let tPos=0,tLoss=0;
+  body.innerHTML=open.map(r=>{
+    const e=+r.giris, st=+r.stop, psr=e-st;
+    const lot=psr>0?Math.floor(riskTL/psr):0, pos=lot*e, pct=cap>0?pos/cap*100:0, loss=lot*psr;
+    tPos+=pos; tLoss+=loss;
+    const warn=pct>25?'color:var(--amber)':'';
+    return `<tr><td class="sym">${r.sembol}</td><td class="num">${fmt(e)}</td><td class="num">${fmt(st)}</td>
+      <td class="num">${fmt(psr)}</td><td class="num">${lot.toLocaleString('tr-TR')}</td>
+      <td class="num">${fmtTL(pos)}</td><td class="num" style="${warn}">%${pct.toFixed(1)}</td>
+      <td class="num neg">−${fmtTL(loss)}</td></tr>`;}).join('');
+  $('kasaTot').innerHTML=`<span>Tüm açık sinyaller alınsa →</span><span>toplam pozisyon <b>${fmtTL(tPos)}</b> (kasanın %${(tPos/cap*100).toFixed(0)}'i)</span><span>tümü stop olsa <b style="color:var(--red)">−${fmtTL(tLoss)}</b> (%${(tLoss/cap*100).toFixed(1)})</span>`;
+}
+function renderKelly(){
+  const W=(+$('kkw').value)/100, R=+$('kkr').value, risk=+$('krisk').value;
+  $('kkwOut').textContent='%'+(W*100).toFixed(0); $('kkrOut').textContent=R.toFixed(1);
+  let f=W-(1-W)/R, fp=f*100;
+  if(f<=0){$('kFull').textContent='%0';$('kHalf').textContent='%0';$('kQ').textContent='%0';
+    $('kCompare').textContent='Bu W/R\'de matematiksel edge yok (f* ≤ 0) → Kelly işlem açma der.';$('kNote').textContent='';return;}
+  $('kFull').textContent='%'+fp.toFixed(1);$('kHalf').textContent='%'+(fp/2).toFixed(1);$('kQ').textContent='%'+(fp/4).toFixed(1);
+  $('kCompare').innerHTML=`Senin ayarın %${risk.toFixed(1)} · çeyrek-Kelly %${(fp/4).toFixed(1)} (×${(fp/4/risk).toFixed(1)}).`;
+  $('kNote').textContent = fp>=10
+    ? `Tam Kelly %${fp.toFixed(0)} — bu seviyede %40-50 drawdown olağandır ve W'yi biraz fazla tahmin etmek iflasa götürür. Tam Kelly'yi kullanma; pratikte çeyrek bir üst sınırdır.`
+    : 'Kelly\'yi hedef değil üst sınır/sağlama olarak kullan; küçük kasada %1-2 sabit risk daha güvenli.';
+}
+['kcap','krisk'].forEach(i=>$(i).addEventListener('input',()=>{renderKasa();renderKelly();}));
+['kkw','kkr'].forEach(i=>$(i).addEventListener('input',renderKelly));
+
+init(); loadGunluk(); loadKasa();
 </script>
 </body>
 </html>
