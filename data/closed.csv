@@ -1,0 +1,3 @@
+id,sembol,tf,tarih,giris,giris_fiili,stop,t1,t2,son_fiyat,getiri_pct,durum,R,gun,mfe,mae,son_tarih,v
+2026-06-08_BYDNR_gunluk,BYDNR,gunluk,2026-06-08,41.5,41.98,39.4,44.65,45.7,39.4,-6.15,STOP,-1.0,2,0.0,-1.08,2026-06-10,2
+2026-06-08_FLAP_gunluk,FLAP,gunluk,2026-06-08,14.47,14.94,13.07,16.57,17.27,14.38,-3.75,GAP_IPTAL,0.0,0,0.0,0.0,2026-06-09,2
