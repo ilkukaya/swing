@@ -1,9 +1,9 @@
 {
-  "guncelleme": "2026-06-12",
+  "guncelleme": "2026-06-15",
   "rejim": "POZITIF",
-  "nefes": 43.3,
-  "toplam_sinyal": 37,
-  "acik": 29,
+  "nefes": 52.0,
+  "toplam_sinyal": 43,
+  "acik": 35,
   "kapanan": 7,
   "gap_iptal": 1,
   "kazanan": 0,
@@ -18,6 +18,6 @@
   "gunluk_ort_R": -1.0,
   "maks_korelasyon": {
     "cift": "BIMAS–MGROS",
-    "deger": 0.76
+    "deger": 0.79
   }
 }
