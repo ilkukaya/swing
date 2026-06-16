@@ -1,23 +1,23 @@
 {
-  "guncelleme": "2026-06-15",
+  "guncelleme": "2026-06-16",
   "rejim": "POZITIF",
   "nefes": 52.0,
-  "toplam_sinyal": 43,
-  "acik": 35,
-  "kapanan": 7,
+  "toplam_sinyal": 45,
+  "acik": 36,
+  "kapanan": 8,
   "gap_iptal": 1,
   "kazanan": 0,
-  "kaybeden": 7,
+  "kaybeden": 8,
   "kazanma_orani_pct": 0.0,
   "ort_R_beklenti": -1.0,
-  "toplam_R": -7.0,
-  "ort_gun": 2.6,
+  "toplam_R": -8.0,
+  "ort_gun": 3.0,
   "ort_kazanc_R": 0.0,
   "ort_kayip_R": 1.0,
   "gunluk_kazanma_pct": 0.0,
   "gunluk_ort_R": -1.0,
   "maks_korelasyon": {
-    "cift": "BIMAS–MGROS",
-    "deger": 0.79
+    "cift": "AGHOL–MAVI",
+    "deger": 0.73
   }
 }

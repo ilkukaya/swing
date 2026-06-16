@@ -6,7 +6,7 @@ id,tarih,tf,sembol,karar,kod,skor,giris,stop,t1,t2,direnc,rr,durum,v
 2026-06-05_MAVI_haftalik,2026-06-05,haftalik,MAVI,Long Adayi,5,81,43.6,39.12,50.31,52.55,50.77,1.6,ACIK,2
 2026-06-05_AKSA_haftalik,2026-06-05,haftalik,AKSA,Long Adayi,5,78,10.65,9.89,11.79,12.17,11.41,1.0,ACIK,2
 2026-06-08_A1YEN_gunluk,2026-06-08,gunluk,A1YEN,Long Adayi,5,85,3.6,3.3,4.05,4.2,4.26,2.2,STOP,2
-2026-06-08_HKTM_gunluk,2026-06-08,gunluk,HKTM,Long Adayi,5,81,14.61,13.6,16.13,16.64,17.22,2.57,ACIK,2
+2026-06-08_HKTM_gunluk,2026-06-08,gunluk,HKTM,Long Adayi,5,81,14.61,13.6,16.13,16.64,17.22,2.57,STOP,2
 2026-06-08_MAKIM_gunluk,2026-06-08,gunluk,MAKIM,Long Adayi,5,81,17.69,16.31,19.77,20.46,20.44,1.99,ACIK,2
 2026-06-08_BYDNR_gunluk,2026-06-08,gunluk,BYDNR,Long Adayi,5,80,41.5,39.4,44.65,45.7,46.88,2.56,STOP,2
 2026-06-08_DYOBY_gunluk,2026-06-08,gunluk,DYOBY,Long Adayi,5,80,16.25,14.84,18.36,19.07,22.8,4.65,STOP,2
@@ -42,3 +42,5 @@ id,tarih,tf,sembol,karar,kod,skor,giris,stop,t1,t2,direnc,rr,durum,v
 2026-06-15_PKART_gunluk,2026-06-15,gunluk,PKART,Long Adayi,5,83,141.6,113.75,183.37,197.3,185.0,1.56,ACIK,3
 2026-06-15_LILAK_gunluk,2026-06-15,gunluk,LILAK,Long Adayi,5,79,37.6,33.48,43.78,45.84,43.86,1.52,ACIK,3
 2026-06-15_MOBTL_gunluk,2026-06-15,gunluk,MOBTL,Long Adayi,5,78,14.82,13.51,16.78,17.43,16.82,1.53,ACIK,3
+2026-06-16_ELITE_gunluk,2026-06-16,gunluk,ELITE,Long Adayi,5,84,38.52,34.55,44.48,46.47,44.7,1.56,ACIK,3
+2026-06-16_ACSEL_gunluk,2026-06-16,gunluk,ACSEL,Long Adayi,5,80,153.6,136.29,179.56,188.21,185.0,1.81,ACIK,3
