@@ -1,9 +1,9 @@
 id,tarih,tf,sembol,karar,kod,skor,giris,stop,t1,t2,direnc,rr,durum,v
 2026-06-08_ODAS_gunluk,2026-06-08,gunluk,ODAS,Long Adayi,5,86,7.48,6.88,8.38,8.68,8.49,1.68,ACIK,2
 2026-06-08_SARKY_gunluk,2026-06-08,gunluk,SARKY,Long Adayi,5,80,29.44,27.54,32.28,33.23,36.57,3.76,STOP,2
-2026-06-05_AGHOL_haftalik,2026-06-05,haftalik,AGHOL,Long Adayi,5,82,32.3,29.05,37.18,38.81,36.2,1.2,ACIK,2
-2026-06-05_TTKOM_haftalik,2026-06-05,haftalik,TTKOM,Long Adayi,5,81,62.3,55.69,72.22,75.52,71.55,1.4,ACIK,2
-2026-06-05_MAVI_haftalik,2026-06-05,haftalik,MAVI,Long Adayi,5,81,43.6,39.12,50.31,52.55,50.77,1.6,ACIK,2
+2026-06-05_AGHOL_haftalik,2026-06-05,haftalik,AGHOL,Long Adayi,5,82,32.3,29.05,37.18,38.81,36.2,1.2,DEAD,2
+2026-06-05_TTKOM_haftalik,2026-06-05,haftalik,TTKOM,Long Adayi,5,81,62.3,55.69,72.22,75.52,71.55,1.4,DEAD,2
+2026-06-05_MAVI_haftalik,2026-06-05,haftalik,MAVI,Long Adayi,5,81,43.6,39.12,50.31,52.55,50.77,1.6,DEAD,2
 2026-06-05_AKSA_haftalik,2026-06-05,haftalik,AKSA,Long Adayi,5,78,10.65,9.89,11.79,12.17,11.41,1.0,ACIK,2
 2026-06-08_A1YEN_gunluk,2026-06-08,gunluk,A1YEN,Long Adayi,5,85,3.6,3.3,4.05,4.2,4.26,2.2,STOP,2
 2026-06-08_HKTM_gunluk,2026-06-08,gunluk,HKTM,Long Adayi,5,81,14.61,13.6,16.13,16.64,17.22,2.57,STOP,2
@@ -55,3 +55,9 @@ id,tarih,tf,sembol,karar,kod,skor,giris,stop,t1,t2,direnc,rr,durum,v
 2026-06-18_GSDHO_gunluk,2026-06-18,gunluk,GSDHO,Long Adayi,5,79,5.85,5.3,6.67,6.94,6.92,1.96,ACIK,3
 2026-06-18_SERNT_gunluk,2026-06-18,gunluk,SERNT,Long Adayi,5,79,9.65,9.02,10.6,10.91,11.4,2.77,ACIK,3
 2026-06-18_GMTAS_gunluk,2026-06-18,gunluk,GMTAS,Long Adayi,5,78,45.62,40.59,53.16,55.68,54.9,1.84,ACIK,3
+2026-06-19_BINBN_gunluk,2026-06-19,gunluk,BINBN,Long Adayi,5,83,182.1,171.07,198.64,204.16,226.3,4.01,ACIK,3
+2026-06-19_EGSER_gunluk,2026-06-19,gunluk,EGSER,Long Adayi,5,78,3.34,3.04,3.79,3.94,3.89,1.83,ACIK,3
+2026-06-19_MSGYO_haftalik,2026-06-19,haftalik,MSGYO,Long Adayi,5,83,6.74,5.49,8.61,9.23,10.05,2.66,ACIK,3
+2026-06-19_OYAYO_haftalik,2026-06-19,haftalik,OYAYO,Long Adayi,5,83,52.7,44.65,64.78,68.8,70.7,2.24,ACIK,3
+2026-06-19_KUVVA_haftalik,2026-06-19,haftalik,KUVVA,Long Adayi,5,79,146.3,127.82,174.03,183.27,175.0,1.55,ACIK,3
+2026-06-19_PSGYO_haftalik,2026-06-19,haftalik,PSGYO,Long Adayi/dikkat,4,79,4.0,2.77,5.84,6.46,4.0,0.0,ACIK,3
