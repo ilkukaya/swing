@@ -1,5 +1,15 @@
 [
   {
+    "date": "2026-07-03",
+    "tf": "haftalik",
+    "file": "2026-07-03_haftalik.json"
+  },
+  {
+    "date": "2026-07-03",
+    "tf": "gunluk",
+    "file": "2026-07-03_gunluk.json"
+  },
+  {
     "date": "2026-07-02",
     "tf": "gunluk",
     "file": "2026-07-02_gunluk.json"

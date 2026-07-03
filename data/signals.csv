@@ -57,10 +57,10 @@ id,tarih,tf,sembol,karar,kod,skor,giris,stop,t1,t2,direnc,rr,durum,v
 2026-06-18_GMTAS_gunluk,2026-06-18,gunluk,GMTAS,Long Adayi,5,78,45.62,40.59,53.16,55.68,54.9,1.84,DEAD,3
 2026-06-19_BINBN_gunluk,2026-06-19,gunluk,BINBN,Long Adayi,5,83,182.1,171.07,198.64,204.16,226.3,4.01,STOP,3
 2026-06-19_EGSER_gunluk,2026-06-19,gunluk,EGSER,Long Adayi,5,78,3.34,3.04,3.79,3.94,3.89,1.83,GAP_IPTAL,3
-2026-06-19_MSGYO_haftalik,2026-06-19,haftalik,MSGYO,Long Adayi,5,83,6.74,5.49,8.61,9.23,10.05,2.66,ACIK,3
-2026-06-19_OYAYO_haftalik,2026-06-19,haftalik,OYAYO,Long Adayi,5,83,52.7,44.65,64.78,68.8,70.7,2.24,ACIK,3
+2026-06-19_MSGYO_haftalik,2026-06-19,haftalik,MSGYO,Long Adayi,5,83,6.74,5.49,8.61,9.23,10.05,2.66,DEAD,3
+2026-06-19_OYAYO_haftalik,2026-06-19,haftalik,OYAYO,Long Adayi,5,83,52.7,44.65,64.78,68.8,70.7,2.24,DEAD,3
 2026-06-19_KUVVA_haftalik,2026-06-19,haftalik,KUVVA,Long Adayi,5,79,146.3,127.82,174.03,183.27,175.0,1.55,STOP,3
-2026-06-19_PSGYO_haftalik,2026-06-19,haftalik,PSGYO,Long Adayi/dikkat,4,79,4.0,2.77,5.84,6.46,4.0,0.0,ACIK,3
+2026-06-19_PSGYO_haftalik,2026-06-19,haftalik,PSGYO,Long Adayi/dikkat,4,79,4.0,2.77,5.84,6.46,4.0,0.0,DEAD,3
 2026-06-22_EKOS_gunluk,2026-06-22,gunluk,EKOS,Long Adayi,5,88,7.71,6.98,8.81,9.17,9.48,2.42,STOP,3
 2026-06-22_KBORU_gunluk,2026-06-22,gunluk,KBORU,Long Adayi,5,88,25.42,23.56,28.21,29.14,28.22,1.51,ACIK,3
 2026-06-22_KORDS_gunluk,2026-06-22,gunluk,KORDS,Long Adayi,5,84,78.5,71.87,88.44,91.75,94.55,2.42,STOP,3
@@ -81,3 +81,8 @@ id,tarih,tf,sembol,karar,kod,skor,giris,stop,t1,t2,direnc,rr,durum,v
 2026-06-30_DCTTR_gunluk,2026-06-30,gunluk,DCTTR,Long Adayi,5,90,13.03,11.79,14.89,15.51,15.38,1.9,ACIK,3
 2026-06-30_ULUUN_gunluk,2026-06-30,gunluk,ULUUN,Long Adayi,5,84,9.15,8.7,9.82,10.05,10.79,3.66,STOP,3
 2026-07-01_AGHOL_gunluk,2026-07-01,gunluk,AGHOL,Long Adayi,5,88,34.06,32.02,37.13,38.15,37.78,1.82,ACIK,3
+2026-07-03_TKFEN_gunluk,2026-07-03,gunluk,TKFEN,Long Adayi,5,84,140.5,129.99,156.27,161.53,159.9,1.85,ACIK,3
+2026-07-03_EKGYO_haftalik,2026-07-03,haftalik,EKGYO,Long Adayi,5,84,20.8,18.03,24.96,26.35,26.36,2.01,ACIK,3
+2026-07-03_BMSTL_haftalik,2026-07-03,haftalik,BMSTL,Long Adayi,5,79,44.02,38.02,53.03,56.03,66.0,3.66,ACIK,3
+2026-07-03_MAALT_haftalik,2026-07-03,haftalik,MAALT,Long Adayi,5,79,1153.0,1066.35,1282.98,1326.3,1576.0,4.88,ACIK,3
+2026-07-03_ZEDUR_haftalik,2026-07-03,haftalik,ZEDUR,Long Adayi,5,79,9.63,8.72,10.99,11.45,11.95,2.55,ACIK,3
