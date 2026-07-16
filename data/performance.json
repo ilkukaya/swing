@@ -1,9 +1,9 @@
 {
-  "guncelleme": "2026-07-15",
+  "guncelleme": "2026-07-16",
   "rejim": "TEMKINLI",
-  "nefes": 28.4,
-  "toplam_sinyal": 101,
-  "acik": 17,
+  "nefes": 34.4,
+  "toplam_sinyal": 103,
+  "acik": 19,
   "kapanan": 81,
   "gap_iptal": 3,
   "kazanan": 17,
@@ -20,6 +20,6 @@
   "haftalik_ort_R": -0.29,
   "maks_korelasyon": {
     "cift": "EKGYO–KCHOL",
-    "deger": 0.78
+    "deger": 0.75
   }
 }
