@@ -1,9 +1,9 @@
 {
-  "guncelleme": "2026-07-23",
+  "guncelleme": "2026-07-24",
   "rejim": "TEMKINLI",
-  "nefes": 34.2,
-  "toplam_sinyal": 111,
-  "acik": 20,
+  "nefes": 31.9,
+  "toplam_sinyal": 117,
+  "acik": 26,
   "kapanan": 88,
   "gap_iptal": 3,
   "kazanan": 20,
@@ -19,7 +19,7 @@
   "haftalik_kazanma_pct": 22.2,
   "haftalik_ort_R": -0.289,
   "maks_korelasyon": {
-    "cift": "ATATP–VBTYZ",
-    "deger": 0.51
+    "cift": "KCHOL–ANHYT",
+    "deger": 0.57
   }
 }
