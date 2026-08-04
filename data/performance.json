@@ -1,7 +1,7 @@
 {
-  "guncelleme": "2026-08-03",
+  "guncelleme": "2026-08-04",
   "rejim": "ZAYIF",
-  "nefes": 23.0,
+  "nefes": 28.7,
   "toplam_sinyal": 118,
   "acik": 3,
   "kapanan": 111,
@@ -20,6 +20,6 @@
   "haftalik_ort_R": -0.293,
   "maks_korelasyon": {
     "cift": "ANHYT–ENJSA",
-    "deger": 0.55
+    "deger": 0.56
   }
 }
