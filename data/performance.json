@@ -1,7 +1,7 @@
 {
-  "guncelleme": "2026-08-07",
+  "guncelleme": "2026-08-10",
   "rejim": "ZAYIF",
-  "nefes": 31.5,
+  "nefes": 30.3,
   "toplam_sinyal": 118,
   "acik": 1,
   "kapanan": 113,
@@ -14,8 +14,8 @@
   "ort_gun": 8.8,
   "ort_kazanc_R": 0.792,
   "ort_kayip_R": 0.797,
-  "haftalik_kazanma_pct": 30.4,
-  "haftalik_ort_R": -0.198,
   "gunluk_kazanma_pct": 28.9,
-  "gunluk_ort_R": -0.368
+  "gunluk_ort_R": -0.368,
+  "haftalik_kazanma_pct": 30.4,
+  "haftalik_ort_R": -0.198
 }
