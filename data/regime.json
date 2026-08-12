@@ -1,8 +1,8 @@
 {
-  "tarih": "2026-08-11",
-  "rejim": "ZAYIF",
-  "breadth": 30.7,
-  "endeks_ok": false,
-  "not_": "endeks haftalik ortalamalarin altinda",
+  "tarih": "2026-08-12",
+  "rejim": "TEMKINLI",
+  "breadth": 32.0,
+  "endeks_ok": true,
+  "not_": "endeks haftalik EMA21+SMA50 ustu",
   "esik": 84
 }
