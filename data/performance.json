@@ -1,11 +1,11 @@
 {
-  "guncelleme": "2026-08-12",
+  "guncelleme": "2026-08-13",
   "rejim": "TEMKINLI",
-  "nefes": 32.0,
-  "toplam_sinyal": 129,
-  "acik": 11,
+  "nefes": 32.2,
+  "toplam_sinyal": 132,
+  "acik": 13,
   "kapanan": 114,
-  "gap_iptal": 4,
+  "gap_iptal": 5,
   "kazanan": 34,
   "kaybeden": 80,
   "kazanma_orani_pct": 29.8,
@@ -20,6 +20,6 @@
   "haftalik_ort_R": -0.198,
   "maks_korelasyon": {
     "cift": "GESAN–EUPWR",
-    "deger": 0.72
+    "deger": 0.73
   }
 }
