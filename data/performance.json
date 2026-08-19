@@ -1,7 +1,7 @@
 {
-  "guncelleme": "2026-08-18",
+  "guncelleme": "2026-08-19",
   "rejim": "TEMKINLI",
-  "nefes": 34.8,
+  "nefes": 37.0,
   "toplam_sinyal": 147,
   "acik": 24,
   "kapanan": 118,
@@ -20,6 +20,6 @@
   "haftalik_ort_R": -0.198,
   "maks_korelasyon": {
     "cift": "GESAN–EUPWR",
-    "deger": 0.56
+    "deger": 0.67
   }
 }
