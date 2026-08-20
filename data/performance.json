@@ -1,25 +1,25 @@
 {
-  "guncelleme": "2026-08-19",
+  "guncelleme": "2026-08-20",
   "rejim": "TEMKINLI",
-  "nefes": 37.0,
+  "nefes": 39.4,
   "toplam_sinyal": 147,
-  "acik": 24,
-  "kapanan": 118,
+  "acik": 23,
+  "kapanan": 119,
   "gap_iptal": 5,
   "kazanan": 34,
-  "kaybeden": 84,
-  "kazanma_orani_pct": 28.8,
-  "ort_R_beklenti": -0.344,
-  "toplam_R": -40.62,
-  "ort_gun": 8.8,
+  "kaybeden": 85,
+  "kazanma_orani_pct": 28.6,
+  "ort_R_beklenti": -0.35,
+  "toplam_R": -41.62,
+  "ort_gun": 8.7,
   "ort_kazanc_R": 0.799,
-  "ort_kayip_R": 0.807,
-  "gunluk_kazanma_pct": 28.4,
-  "gunluk_ort_R": -0.38,
+  "ort_kayip_R": 0.809,
+  "gunluk_kazanma_pct": 28.1,
+  "gunluk_ort_R": -0.386,
   "haftalik_kazanma_pct": 30.4,
   "haftalik_ort_R": -0.198,
   "maks_korelasyon": {
     "cift": "GESAN–EUPWR",
-    "deger": 0.67
+    "deger": 0.72
   }
 }
