@@ -1,8 +1,8 @@
 {
-  "tarih": "2026-09-09",
-  "rejim": "POZITIF",
-  "breadth": 40.5,
+  "tarih": "2026-09-10",
+  "rejim": "TEMKINLI",
+  "breadth": 38.8,
   "endeks_ok": true,
   "not_": "endeks haftalik EMA21+SMA50 ustu",
-  "esik": 78
+  "esik": 84
 }
